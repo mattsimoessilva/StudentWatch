@@ -1,22 +1,10 @@
 from django.shortcuts import render
-
-presence = [
-    {
-        'student': 'Matheus da Silva',
-        'date': '30/09/2021',
-        'time': '11:24'
-    },
-        {
-        'student': 'Guilherme Carvalho',
-        'date': '20/09/2021',
-        'time': '18:30'
-    }
-]
+from .models import Professor
 
 
 def home(request):
     context = {
-        'presence': presence
+        'professores': Professor.objects.all()
     }
     return render(request, 'page/home.html', context)
 

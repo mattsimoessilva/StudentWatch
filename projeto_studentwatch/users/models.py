@@ -12,6 +12,7 @@ class Professor(models.Model):
 
 class Curso(models.Model):
     nome = models.CharField(max_length=100)
+    descricao = models.TextField(max_length=500)
 
     def __str__(self):
         return self.nome
@@ -35,3 +36,4 @@ class Coordenador(models.Model):
 
     def __str__(self):
         return self.nome
+
