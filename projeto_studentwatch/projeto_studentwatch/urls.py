@@ -20,5 +20,6 @@ from users import views as user_views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('cadastrarCurso/', user_views.cadastrarCurso, name='cadastrarCurso'),
+    path('cadastrarProfessor/', user_views.cadastrarProfessor, name='cadastrarProfessor'),
     path('', include('page.urls')),
 ]
