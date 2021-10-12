@@ -21,5 +21,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('cadastrarCurso/', user_views.cadastrarCurso, name='cadastrarCurso'),
     path('cadastrarProfessor/', user_views.cadastrarProfessor, name='cadastrarProfessor'),
+    path('cadastrarEstudante/', user_views.cadastrarEstudante, name='cadastrarEstudante'),
     path('', include('page.urls')),
 ]
