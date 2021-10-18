@@ -1,7 +1,77 @@
 from django import forms
-from django.forms import ModelForm, TextInput, Textarea
-from django.forms.widgets import EmailInput, NumberInput, PasswordInput, Select
-from .models import Curso, Professor, Estudante
+from django.forms import ModelForm, TextInput, Textarea, EmailInput, Select, PasswordInput
+from .models import Curso, ProfessorProfile, EstudanteProfile
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth import get_user_model
+
+class UserForm(UserCreationForm):
+    required_css_class = 'required'
+    class Meta:
+        model = get_user_model()
+        fields = ('username', 'email', 'password1', 'password2')
+        widgets = {
+            'username': TextInput(attrs={
+                'class': "form-control", 
+                'style': 'max-width: 300px;',
+                'placeholder': 'Digite o nome'
+            }),
+            'email': EmailInput(attrs={
+                'class': "form-control",
+                'style': 'max-width: 300px;',
+                'placeholder': 'Digite o e-mail'
+            }),
+            'password1': PasswordInput(attrs={
+                'class': "form-control",
+                'style': 'max-width: 300px;',
+                'placeholder': 'Digite a senha'
+            }),
+            'password2': PasswordInput(attrs={
+                'class': "form-control",
+                'style': 'max-width: 300px;',
+                'placeholder': 'Digite a senha novamente'
+            })
+        }
+        labels = {
+            'username': 'Nome',
+            'email': 'E-mail',
+            'password1': 'Senha',
+            'password2': 'Confirmação da Senha'
+        }
+
+class EstudanteProfileForm(forms.ModelForm):
+    class Meta:
+        model = EstudanteProfile
+        fields = ('matricula', 'curso',)
+        widgets = {
+            'matricula': TextInput(attrs={
+                'class': "form-control", 
+                'style': 'max-width: 300px;',
+                'placeholder': 'Digite o Nº de matrícula'
+            }),
+            'curso': Select(attrs={
+                'class': "form-control", 
+                'style': 'max-width: 300px;',
+                'choices': Curso,
+            })
+        }
+        labels = {
+            'matricula': 'Matrícula'
+        }
+        
+class ProfessorProfileForm(forms.ModelForm):
+    class Meta:
+        model = ProfessorProfile
+        fields = ('campoextra',)
+        widgets = {
+            'campoextra': TextInput(attrs={
+                'class': "form-control", 
+                'style': 'max-width: 300px;',
+                'placeholder': 'Digite o campo extra do professor'
+            })
+        }
+        labels = {
+            'campoextra': 'Campo Extra'
+        }
 
 
 class CursoForm(ModelForm):
@@ -25,62 +95,5 @@ class CursoForm(ModelForm):
             'descricao': 'Descrição'
         }
 
-class ProfessorForm(ModelForm):
-    required_css_class = 'required'
-    class Meta:
-        model = Professor
-        fields = '__all__'   
-        widgets = {
-            'nome': TextInput(attrs={
-                'class': "form-control",
-                'style': 'max-width: 300px;',
-                'placeholder': 'Digite o nome do professor'
-                }),
-            'email': EmailInput(attrs={
-                'class': "form-control", 
-                'style': 'max-width: 300px;',
-                'placeholder': 'Digite o e-mail do professor'
-                }),
-            'senha': PasswordInput(attrs={
-                'class': "form-control", 
-                'style': 'max-width: 300px;',
-                'placeholder': 'Digite a senha do professor'
-                })
-        }
-        labels = {
-            'email': 'E-mail'
-        }
-
-class EstudanteForm(ModelForm):
-    required_css_class = 'required'
-    class Meta:
-        model = Estudante
-        fields = '__all__'   
-        widgets = {
-            'nome': TextInput(attrs={
-                'class': "form-control", 
-                'style': 'max-width: 300px;',
-                'placeholder': 'Digite o nome do estudante'
-                }),
-            'matricula': TextInput(attrs={
-                'class': "form-control", 
-                'style': 'max-width: 300px;',
-                'placeholder': 'Digite o nº de matrícula do estudante'
-                }),
-            'periodo': NumberInput(attrs={
-                'class': "form-control", 
-                'style': 'max-width: 300px;',
-                'placeholder': 'Digite o período atual do estudante',
-                'min': 1,
-                'max': 4
-                }),
-            'curso': Select(attrs={
-                'class': "form-control", 
-                'style': 'max-width: 300px;',
-                'choices': Curso,
-                })
-        }
-        labels = {
-            'periodo': 'Período',
-            'matricula': 'Nº de Matrícula'
-        }
+class LoginForm(AuthenticationForm):
+    username = forms.CharField(label='Email / Username')

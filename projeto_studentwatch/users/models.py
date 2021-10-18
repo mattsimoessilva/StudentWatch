@@ -1,14 +1,8 @@
 from django.db import models
-
-
-class Professor(models.Model):
-    nome = models.CharField(max_length=100)
-    email = models.EmailField(max_length=200)
-    senha = models.CharField(max_length=50)
-
-    def __str__(self):
-        return self.nome
-
+from django.contrib.auth.models import AbstractUser
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.utils.translation import gettext_lazy as _
 
 class Curso(models.Model):
     nome = models.CharField(max_length=100)
@@ -17,35 +11,44 @@ class Curso(models.Model):
     def __str__(self):
         return self.nome
 
-class ProfessorCurso(models.Model):
-    professor = models.ForeignKey(Professor, on_delete=models.DO_NOTHING)
-    curso = models.ForeignKey(Curso, on_delete=models.DO_NOTHING)
+#USER AUTHENTICATION STUFF
+class User(AbstractUser):
+    email = models.EmailField(_('email address'), unique=True)
+    is_estudante = models.BooleanField(default=True)
 
-class Estudante(models.Model):
-    nome = models.CharField(max_length=100)
-    matricula = models.CharField(max_length=20)
-    periodo = models.CharField(max_length=6)
-    curso = models.ForeignKey(Curso, on_delete=models.DO_NOTHING)
-
-    def __str__(self):
-        return self.nome
-
-class Disciplina(models.Model):
-    nome = models.CharField(max_length=100)
-    curso = models.ForeignKey(Curso, on_delete=models.DO_NOTHING)
-    professor = models.ForeignKey(Professor, on_delete=models.DO_NOTHING)
+class EstudanteProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, related_name='estudante_profile')
+    matricula = models.CharField(max_length=20, null=True)
+    curso = models.ForeignKey(Curso, on_delete=models.DO_NOTHING, null=True)
 
     def __str__(self):
-        return self.nome
+        return self.user.username
 
-class DisciplinaEstudante(models.Model):
-    estudante = models.ForeignKey(Estudante, on_delete=models.DO_NOTHING)
-    disciplina = models.ForeignKey(Disciplina, on_delete=models.DO_NOTHING)
-
-class Coordenador(models.Model):
-    nome = models.CharField(max_length=100)
-    curso = models.ForeignKey(Curso, on_delete=models.DO_NOTHING)
+class ProfessorProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, related_name='professor_profile')
+    campoextra = models.CharField(max_length=100, null=True)
 
     def __str__(self):
-        return self.nome
+        return self.user.username
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+	print('****', created)
+	if instance.is_estudante:
+		EstudanteProfile.objects.get_or_create(user = instance)
+	else:
+		ProfessorProfile.objects.get_or_create(user = instance)
+
+
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+	print('_-----')	
+	# print(instance.internprofile.matricula, instance.estudanteprofile.curso)
+	if instance.is_estudante:
+		instance.estudante_profile.save()
+	else:
+		instance.professor_profile.save()
+
+
 
