@@ -96,4 +96,6 @@ class CursoForm(ModelForm):
         }
 
 class LoginForm(AuthenticationForm):
-    username = forms.CharField(label='Email / Username')
+    required_css_class = 'required'
+    username = forms.CharField(label="E-mail", widget=forms.EmailInput(attrs={'class': 'form-control', 'style': 'max-width: 300px;', 'placeholder': 'Digite o e-mail'}))
+    password = forms.CharField(label="Senha", widget=forms.PasswordInput(attrs={'class': 'form-control', 'style': 'max-width: 300px;', 'placeholder': 'Digite a senha'}))

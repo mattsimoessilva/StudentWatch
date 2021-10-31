@@ -1,12 +1,17 @@
-from django.shortcuts import redirect, render
+from django.shortcuts import render
 from .forms import CursoForm, ProfessorProfileForm, EstudanteProfileForm, UserForm, LoginForm
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth import views as auth_views
-from django.views import generic
+from django.contrib.auth.models import Permission
 from django.urls import reverse_lazy
+from .models import Presenca, Turno, Aula, EstudanteProfile
+import datetime
+import calendar
+
 
 @login_required
+@permission_required("users.add_estudanteprofile", raise_exception=True)
 def estudante_profile_view(request):
     if request.method == 'POST':	
         user_form = UserForm(request.POST, prefix='UF')
@@ -14,12 +19,14 @@ def estudante_profile_view(request):
 
         if user_form.is_valid() and profile_form.is_valid():
             user = user_form.save(commit=False)
-            user.is_estudante = True
+            user.tipo = "Estudante"
             user.save()
 
             user.estudante_profile.matricula = profile_form.cleaned_data.get('matricula')
             user.estudante_profile.curso = profile_form.cleaned_data.get('curso')
             user.estudante_profile.save()  
+            permission = Permission.objects.get(codename='add_presenca')
+            user.user_permissions.add(permission)
 
             nome = user_form.cleaned_data.get('username')
             messages.success(request, f"Estudante '{nome}' cadastrado")
@@ -34,35 +41,9 @@ def estudante_profile_view(request):
 			'profile_form': profile_form,
 	})
 
-def auto_estudante_profile_view(request):
-    if request.method == 'POST':	
-        user_form = UserForm(request.POST, prefix='UF')
-        profile_form = EstudanteProfileForm(request.POST, prefix='PF')
-
-        if user_form.is_valid() and profile_form.is_valid():
-            user = user_form.save(commit=False)
-            user.is_estudante = True
-            user.save()
-
-            user.estudante_profile.matricula = profile_form.cleaned_data.get('matricula')
-            user.estudante_profile.curso = profile_form.cleaned_data.get('curso')
-            user.estudante_profile.save()  
-
-            nome = user_form.cleaned_data.get('username')
-            messages.success(request, f"Sua conta foi criada! Agora você pode acessar o sistema")
-            user_form = UserForm(request.POST, prefix='UF')
-            profile_form = EstudanteProfileForm(request.POST, prefix='PF')
-            return redirect('login')
-    else:
-        user_form = UserForm(prefix='UF')
-        profile_form = EstudanteProfileForm(prefix='PF')
-		
-    return render(request, 'users/autocadastro-estudante.html',{
-			'user_form': user_form,
-			'profile_form': profile_form,
-	})
 
 @login_required
+@permission_required("users.add_professorprofile", raise_exception=True)
 def professor_profile_view(request):
     if request.method == 'POST':	
         user_form = UserForm(request.POST, prefix='UF')
@@ -70,11 +51,11 @@ def professor_profile_view(request):
 
         if user_form.is_valid() and profile_form.is_valid():
             user = user_form.save(commit=False)
-            user.is_estudante = False
+            user.tipo = "Professor"
             user.save()
 
             user.professor_profile.campoextra = profile_form.cleaned_data.get('campoextra')
-            user.professor_profile.save()  
+            user.professor_profile.save()
 
             nome = user_form.cleaned_data.get('username')
             messages.success(request, f"Professor '{nome}' cadastrado")
@@ -89,7 +70,9 @@ def professor_profile_view(request):
 			'profile_form': profile_form,
 	})
 
+
 @login_required
+@permission_required("users.add_curso", raise_exception=True)
 def cadastrarCurso(request):
     if request.method == 'POST':
         form = CursoForm(request.POST)
@@ -103,6 +86,40 @@ def cadastrarCurso(request):
     return render(request, 'users/cadastrar-curso.html', {'form': form})
 
 
+@login_required
+@permission_required("users.add_presenca", raise_exception=True)
+def registrarPresenca(request):
+    if request.method == 'POST':
+        usuario = request.user
+        data = datetime.datetime.now().date()
+        hora = datetime.datetime.now().time()
+        dia_semana = calendar.day_name[data.weekday()]
+
+        lista_turnos = Turno.objects.all()
+        for x in range(0, len(lista_turnos), 1):
+            if(hora > lista_turnos[x].inicio and hora < lista_turnos[x].fim):
+                turno = lista_turnos[x]
+
+        lista_profiles = EstudanteProfile.objects.all()
+        for x in range(0, len(lista_profiles), 1):
+            if(lista_profiles[x].user == usuario):
+                profile = lista_profiles[x]
+
+        lista_aulas = Aula.objects.all()
+        for x in range(0, len(lista_aulas), 1):
+            if(lista_aulas[x].disciplina.curso == profile.curso and lista_aulas[x].turno == turno and lista_aulas[x].dia_semana.nome == dia_semana):
+                aula = lista_aulas[x]
+
+        reg = Presenca(estudante=profile, data=data, aula=aula)
+        reg.save()
+    else:
+        pass
+    return render(request, 'users/registrar-presenca.html')
+
+
 class LoginView(auth_views.LoginView):
     form_class = LoginForm
     template_name = 'users/login.html'
+
+def error_403_view(request, exception):
+    return render(request, 'users/403.html')
