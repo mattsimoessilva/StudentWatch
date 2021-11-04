@@ -1,0 +1,9 @@
+{% extends "page/base.html" %}
+{% block content %}
+    <h2>Você saiu do sistema</h2>
+    <div class="border-top pt-3">
+        <small class="text-muted">
+            <a href="{% url 'login' %}">Acessar o sistema novamente</a>
+        </small>
+    </div>
+{% endblock content %}

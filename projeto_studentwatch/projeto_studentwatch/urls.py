@@ -14,9 +14,23 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.contrib.auth import views as auth_views
 from django.urls import path, include
+from users import views as user_views
+
+from users.views import LoginView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('cadastrarCurso/', user_views.cadastrarCurso, name='cadastrarCurso'),
+    path('registrarPresenca/', user_views.registrarPresenca, name='registrarPresenca'),
+    path('escolherCurso/', user_views.escolherCurso, name='escolherCurso'),
+    path('visualizarPresenca/', user_views.visualizarPresenca, name='visualizarPresenca'),
+    path('cadastrarProfessor/', user_views.professor_profile_view, name='cadastrarProfessor'),
+    path('cadastrarEstudante/', user_views.estudante_profile_view, name='cadastrarEstudante'),
+    path('login/', LoginView.as_view(template_name='users/login.html'), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(template_name='users/logout.html'), name='logout'),
     path('', include('page.urls')),
 ]
+
+handler403 = 'users.views.error_403_view'
