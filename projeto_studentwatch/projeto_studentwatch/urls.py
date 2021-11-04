@@ -24,6 +24,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('cadastrarCurso/', user_views.cadastrarCurso, name='cadastrarCurso'),
     path('registrarPresenca/', user_views.registrarPresenca, name='registrarPresenca'),
+    path('escolherCurso/', user_views.escolherCurso, name='escolherCurso'),
+    path('visualizarPresenca/', user_views.visualizarPresenca, name='visualizarPresenca'),
     path('cadastrarProfessor/', user_views.professor_profile_view, name='cadastrarProfessor'),
     path('cadastrarEstudante/', user_views.estudante_profile_view, name='cadastrarEstudante'),
     path('login/', LoginView.as_view(template_name='users/login.html'), name='login'),

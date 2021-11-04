@@ -1,11 +1,11 @@
 from django.shortcuts import render
-from .forms import CursoForm, ProfessorProfileForm, EstudanteProfileForm, UserForm, LoginForm
+from .forms import CursoForm, ProfessorProfileForm, EstudanteProfileForm, UserForm, LoginForm, EscolherCursoForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.models import Permission
 from django.urls import reverse_lazy
-from .models import Presenca, Turno, Aula, EstudanteProfile
+from .models import Presenca, Professor_curso, Turno, Aula, EstudanteProfile
 import datetime
 import calendar
 
@@ -116,6 +116,34 @@ def registrarPresenca(request):
         pass
     return render(request, 'users/registrar-presenca.html')
 
+
+@login_required
+def visualizarPresenca(request):
+    form = EscolherCursoForm()
+    if request.method=='POST':
+        form = EscolherCursoForm(request.POST)
+        if form.is_valid():
+            dados = form.cleaned_data
+            curso = dados.get('curso')
+            usuario = request.user
+
+            presencas = []
+            lista_presencas = Presenca.objects.all()
+            for x in range(len(lista_presencas)-1, -1, -1):
+                if(lista_presencas[x].aula.disciplina.professor.user == usuario and lista_presencas[x].aula.disciplina.curso.nome == str(curso)):
+                    presencas.append(lista_presencas[x])
+
+            context = {
+                'presencas': presencas
+            }
+
+    return render(request, 'users/visualizar-presenca.html', context)
+
+
+@login_required
+def escolherCurso(request):
+    form = EscolherCursoForm()
+    return render(request, 'users/escolher-curso.html', {'form': form})
 
 class LoginView(auth_views.LoginView):
     form_class = LoginForm

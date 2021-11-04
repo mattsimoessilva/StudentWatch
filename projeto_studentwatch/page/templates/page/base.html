@@ -31,7 +31,7 @@
                 <a class="nav-item nav-link" href="{% url 'registrarPresenca' %}">Registrar Presença</a>
               {% endif %}
                 {% if user.is_authenticated and user.tipo == "Professor" %}
-                  <a class="nav-item nav-link" href="#">Visualizar Presença</a>
+                  <a class="nav-item nav-link" href="{% url 'escolherCurso' %}">Visualizar Presença</a>
                 {% endif %}
                 {% if user.is_authenticated and user.tipo == "Coordenador" %}
                 <a class="nav-item nav-link" href="{% url 'cadastrarProfessor' %}">Cadastrar Professor</a>

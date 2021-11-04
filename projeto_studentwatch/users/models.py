@@ -85,6 +85,13 @@ class Presenca(models.Model):
     def __str__(self):
         return str(self.estudante)
 
+class Professor_curso(models.Model):
+    professor = models.ForeignKey(ProfessorProfile, on_delete=models.DO_NOTHING, null=True) 
+    curso = models.ForeignKey(Curso, on_delete=models.DO_NOTHING, null=True)
+
+    def __str__(self):
+        return str(self.professor)  
+        
 
 #SIGNAL STUFF TO ASSOCIATE THE USER MODEL WITH THE USER PROFILES
 @receiver(post_save, sender=User)
