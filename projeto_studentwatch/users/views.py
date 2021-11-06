@@ -142,8 +142,10 @@ def visualizarPresenca(request):
 
 @login_required
 def escolherCurso(request):
+    #form = EscolherCursoForm(user=request.user)
     form = EscolherCursoForm()
     return render(request, 'users/escolher-curso.html', {'form': form})
+
 
 class LoginView(auth_views.LoginView):
     form_class = LoginForm
