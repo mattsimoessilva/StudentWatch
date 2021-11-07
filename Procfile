@@ -1,2 +1,2 @@
 release: python projeto_studentwatch/manage.py migrate
-web: cd project_studentwatch && gunicorn projeto_studentwatch.wsgi
+web: gunicorn projeto_studenwatch/projeto_studentwatch/projeto_studentwatch.wsgi
