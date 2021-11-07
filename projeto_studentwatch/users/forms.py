@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import ModelForm, TextInput, Textarea, EmailInput, Select, PasswordInput
-from .models import Curso, Disciplina, ProfessorProfile, EstudanteProfile
+from .models import Curso, Disciplina, ProfessorProfile, EstudanteProfile, Professor_curso
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import get_user_model
 
@@ -98,16 +98,10 @@ class CursoForm(ModelForm):
 class EscolherCursoForm(forms.Form): 
 
     #def __init__(self, *args, **kwargs):
-        #self.user = kwargs.pop('user')
-        #super(MyForm, self).__init__(*args, **kwargs)
-
-    #usuario = request.user
-    #cursos = []
-    #professor_curso_list = Professor_curso.objects.all()
-
-    #for x in range(0, len(professor_curso_list), 1):
-        #if(professor_curso_list[x].professor == usuario):
-            #cursos.append(professor_curso_list[x])
+        #self.user = kwargs.pop('user', None)
+        #super(EscolherCursoForm, self).__init__(*args, **kwargs) 
+         
+        #cursos = Professor_curso.objects.filter(professor = self.user.id)
 
     cursos = Curso.objects.all()
     curso = forms.ModelChoiceField(label="Curso", queryset=cursos, widget=forms.Select(attrs={'class': 'form-control', 'style': 'max-width: 300px;'}))
