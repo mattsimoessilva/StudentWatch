@@ -10,8 +10,8 @@ import datetime
 import calendar
 
 
-@login_required
-@permission_required("users.add_estudanteprofile", raise_exception=True)
+#@login_required
+#@permission_required("users.add_estudanteprofile", raise_exception=True)
 def estudante_profile_view(request):
     if request.method == 'POST':	
         user_form = UserForm(request.POST, prefix='UF')
@@ -42,8 +42,8 @@ def estudante_profile_view(request):
 	})
 
 
-@login_required
-@permission_required("users.add_professorprofile", raise_exception=True)
+#@login_required
+#@permission_required("users.add_professorprofile", raise_exception=True)
 def professor_profile_view(request):
     if request.method == 'POST':	
         user_form = UserForm(request.POST, prefix='UF')
@@ -56,6 +56,8 @@ def professor_profile_view(request):
 
             user.professor_profile.campoextra = profile_form.cleaned_data.get('campoextra')
             user.professor_profile.save()
+            permission = Permission.objects.get(codename='view_presenca')
+            user.user_permissions.add(permission)
 
             nome = user_form.cleaned_data.get('username')
             messages.success(request, f"Professor '{nome}' cadastrado")
@@ -118,6 +120,7 @@ def registrarPresenca(request):
 
 
 @login_required
+@permission_required("users.view_presenca", raise_exception=True)
 def visualizarPresenca(request):
     form = EscolherCursoForm()
     if request.method=='POST':
