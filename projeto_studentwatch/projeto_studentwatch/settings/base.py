@@ -71,7 +71,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'application'
+WSGI_APPLICATION = 'projeto_studentwatch.wsgi.application'
 
 
 # Database
