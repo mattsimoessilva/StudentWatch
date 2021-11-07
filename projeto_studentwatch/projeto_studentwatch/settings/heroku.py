@@ -1,6 +1,6 @@
 import environ
 
-from projeto_studentwatch.settings.base import *
+from projeto_studentwatch.projeto_studentwatch.settings.base import *
 
 env = environ.Env()
 
