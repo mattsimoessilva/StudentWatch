@@ -9,7 +9,11 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 
+    <!-- Custom CSS -->
     <link rel="stylesheet" type="text/css" href="{% static 'page/main.css' %}">
+
+    <!-- Google Material Design CSS -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
     {% if title %}
         <title>StudentWatch - {{ title }}</title>
@@ -27,12 +31,6 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarToggle">
               <div class="navbar-nav mr-auto">
-                {% if user.is_authenticated and user.tipo == "Estudante" %}
-                <a class="nav-item nav-link" href="{% url 'registrarPresenca' %}">Registrar Presença</a>
-              {% endif %}
-                {% if user.is_authenticated and user.tipo == "Professor" %}
-                  <a class="nav-item nav-link" href="{% url 'escolherCurso' %}">Visualizar Presença</a>
-                {% endif %}
                 {% if user.is_authenticated and user.tipo == "Coordenador" %}
                 <a class="nav-item nav-link" href="{% url 'cadastrarProfessor' %}">Cadastrar Professor</a>
                 <a class="nav-item nav-link" href="{% url 'cadastrarEstudante' %}">Cadastrar Estudante</a>

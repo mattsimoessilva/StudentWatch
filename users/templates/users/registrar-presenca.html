@@ -1,6 +1,42 @@
 {% extends "page/base.html" %}
 {% block content %}
+{% if curso != None and disciplina != None and curso != None %}
     <div class="content-section">
+        <table class="table table">
+            <tr>
+                <td>
+                    <span class="material-icons">source</span>
+                </td>
+                <td>
+                    Curso
+                </td>
+                <td>
+                    {{ curso }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="material-icons">book</span>
+                </td>
+                <td>
+                    Disciplina
+                </td>
+                <td>
+                    {{ disciplina }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="material-icons">schedule</span>
+                </td>
+                <td>
+                    Turno
+                </td>
+                <td>
+                    {{ turno }}
+                </td>
+            </tr>
+        </table>
         <form method="POST">
             {% csrf_token %}
             <fieldset class="form-group">
@@ -10,5 +46,6 @@
                 <button class="btn btn-outline-info" type="submit">Registrar</button>
             </div>
         </form>
+    {% endif %}
     </div>
 {% endblock content %}

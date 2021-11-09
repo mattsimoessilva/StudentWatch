@@ -91,29 +91,32 @@ def cadastrarCurso(request):
 @login_required
 @permission_required("users.add_presenca", raise_exception=True)
 def registrarPresenca(request):
+    usuario = request.user
+    data = datetime.datetime.now().date()
+    hora = datetime.datetime.now().time()
+    dia_semana = calendar.day_name[data.weekday()]
+    curso = None
+    turno = None
+    aula = None
+    presenca_anterior = 0
+
+    lista_turnos = Turno.objects.all()
+    for x in range(0, len(lista_turnos), 1):
+        if(hora > lista_turnos[x].inicio and hora < lista_turnos[x].fim):
+            turno = lista_turnos[x]
+
+    lista_profiles = EstudanteProfile.objects.all()
+    for x in range(0, len(lista_profiles), 1):
+        if(lista_profiles[x].user == usuario):
+            profile = lista_profiles[x]
+
+    lista_aulas = Aula.objects.all()
+    for x in range(0, len(lista_aulas), 1):
+        if(lista_aulas[x].disciplina.curso == profile.curso and lista_aulas[x].turno == turno and lista_aulas[x].dia_semana.nome == dia_semana):
+            aula = lista_aulas[x]
+            curso = lista_aulas[x].disciplina.curso
+
     if request.method == 'POST':
-        usuario = request.user
-        data = datetime.datetime.now().date()
-        hora = datetime.datetime.now().time()
-        dia_semana = calendar.day_name[data.weekday()]
-        turno = None
-        aula = None
-        presenca_anterior = 0
-
-        lista_turnos = Turno.objects.all()
-        for x in range(0, len(lista_turnos), 1):
-            if(hora > lista_turnos[x].inicio and hora < lista_turnos[x].fim):
-                turno = lista_turnos[x]
-
-        lista_profiles = EstudanteProfile.objects.all()
-        for x in range(0, len(lista_profiles), 1):
-            if(lista_profiles[x].user == usuario):
-                profile = lista_profiles[x]
-
-        lista_aulas = Aula.objects.all()
-        for x in range(0, len(lista_aulas), 1):
-            if(lista_aulas[x].disciplina.curso == profile.curso and lista_aulas[x].turno == turno and lista_aulas[x].dia_semana.nome == dia_semana):
-                aula = lista_aulas[x]
 
         lista_presencas = Presenca.objects.all()
         for x in range(0, len(lista_presencas), 1):
@@ -126,9 +129,16 @@ def registrarPresenca(request):
             messages.success(request, f"Presença registrada")
         else:
             messages.warning(request, f"Não foi possível registrar sua presença")
-    else:
-        pass
-    return render(request, 'users/registrar-presenca.html')
+    
+    if(curso == None and aula == None and turno == None):
+        messages.warning(request, f"Desculpe, não há nenhuma aula no momento")
+
+    context = {
+            'curso': curso,
+            'disciplina': aula,
+            'turno': turno
+    }
+    return render(request, 'users/registrar-presenca.html', context)
 
 
 @login_required
