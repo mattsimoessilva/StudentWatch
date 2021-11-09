@@ -1,0 +1,41 @@
+{% extends "page/base.html" %}
+{% block content %}
+    <div class="content-section">
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4">Lista de presença</legend>
+            <table class="table table-responsive">
+                <tr>
+                    <td>
+                        Estudante
+                    </td>
+                    <td>
+                        Data
+                    </td>
+                    <td>
+                        Disciplina
+                    </td>
+                    <td>
+                        Turno
+                    </td>
+                </tr>
+                {% for presenca in presencas %} 
+                <tr>
+                    <td>
+                        {{ presenca.estudante }}
+                    </td>
+                    <td>
+                        {{ presenca.data|date:"d F, Y" }}
+                    </td>
+                    <td>
+                        {{ presenca.aula }}
+                    </td>
+                    <td>
+                        {{ presenca.aula.turno }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </fieldset>
+    </div>
+{% endblock content %}
+
