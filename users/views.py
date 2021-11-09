@@ -116,27 +116,31 @@ def registrarPresenca(request):
             aula = lista_aulas[x]
             curso = lista_aulas[x].disciplina.curso
 
-    if request.method == 'POST':
+    lista_presencas = Presenca.objects.all()
+    for x in range(0, len(lista_presencas), 1):
+        if(lista_presencas[x].aula.turno == turno and lista_presencas[x].estudante.user == usuario and lista_presencas[x].data == data):
+            presenca_anterior += 1
 
-        lista_presencas = Presenca.objects.all()
-        for x in range(0, len(lista_presencas), 1):
-            if(lista_presencas[x].aula.turno == turno and lista_presencas[x].estudante.user == usuario and lista_presencas[x].data == data):
-                presenca_anterior += 1
+    if request.method == 'POST':
 
         if(turno != None and aula != None and presenca_anterior == 0):
             reg = Presenca(estudante=profile, data=data, aula=aula)
             reg.save()
             messages.success(request, f"Presença registrada")
-        else:
-            messages.warning(request, f"Não foi possível registrar sua presença")
+
     
     if(curso == None or aula == None or turno == None):
         messages.warning(request, f"Desculpe, não há nenhuma aula no momento")
 
+    if(presenca_anterior != 0):
+        messages.warning(request, f"Você já registrou presença na aula atual")
+
+
     context = {
             'curso': curso,
             'disciplina': aula,
-            'turno': turno
+            'turno': turno,
+            'presenca_anterior': presenca_anterior
     }
     return render(request, 'users/registrar-presenca.html', context)
 

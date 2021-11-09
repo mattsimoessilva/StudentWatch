@@ -37,15 +37,17 @@
                 </td>
             </tr>
         </table>
-        <form method="POST">
-            {% csrf_token %}
-            <fieldset class="form-group">
-                <legend class="border-bottom mb-4">Registre sua presença</legend>
-            </fieldset>
-            <div class="form-group">
-                <button class="btn btn-outline-info" type="submit">Registrar</button>
-            </div>
-        </form>
+        {% if presenca_anterior == 0 %}
+            <form method="POST">
+                {% csrf_token %}
+                <fieldset class="form-group">
+                    <legend class="border-bottom mb-4">Registre sua presença</legend>
+                </fieldset>
+                <div class="form-group">
+                    <button class="btn btn-outline-info" type="submit">Registrar</button>
+                </div>
+            </form>
+        {% endif %}
     {% endif %}
     </div>
 {% endblock content %}
