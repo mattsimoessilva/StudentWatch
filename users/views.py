@@ -130,7 +130,7 @@ def registrarPresenca(request):
         else:
             messages.warning(request, f"Não foi possível registrar sua presença")
     
-    if(curso == None and aula == None and turno == None):
+    if(curso == None or aula == None or turno == None):
         messages.warning(request, f"Desculpe, não há nenhuma aula no momento")
 
     context = {
