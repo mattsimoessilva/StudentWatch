@@ -1,5 +1,5 @@
 body {
-    background: #fafafa;
+    background: #f2f4f7;
     color: #333333;
     margin-top: 5rem;
   }
@@ -13,7 +13,7 @@ body {
   }
   
   .bg-steel {
-    background-color: #5f788a;
+    background-color: #4675b8;
   }
   
   .site-header .navbar-nav .nav-link {
@@ -32,7 +32,7 @@ body {
     background: #ffffff;
     padding: 10px 20px;
     border: 1px solid #dddddd;
-    border-radius: 3px;
+    border-radius: 10px;
     margin-bottom: 20px;
   }
   
@@ -85,4 +85,14 @@ body {
 
   .required label:after {
     content: "*";
+}
+
+.btn-outline-info:hover, .btn-outline-info:active, .btn-outline-info:visited {
+  background-color: #4675b8 !important;
+  color: white !important;
+}
+
+.btn-outline-info {
+  border-color: #4675b8 !important;
+  color: #4675b8 !important;
 }

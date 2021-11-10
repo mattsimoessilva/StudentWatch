@@ -12,22 +12,22 @@ class UserForm(UserCreationForm):
         widgets = {
             'username': TextInput(attrs={
                 'class': "form-control", 
-                'style': 'max-width: 300px;',
+                'style': 'max-width: 500px;',
                 'placeholder': 'Digite o nome'
             }),
             'email': EmailInput(attrs={
                 'class': "form-control",
-                'style': 'max-width: 300px;',
+                'style': 'max-width: 500px;',
                 'placeholder': 'Digite o e-mail'
             }),
             'password1': PasswordInput(attrs={
                 'class': "form-control",
-                'style': 'max-width: 300px;',
+                'style': 'max-width: 500px;',
                 'placeholder': 'Digite a senha'
             }),
             'password2': PasswordInput(attrs={
                 'class': "form-control",
-                'style': 'max-width: 300px;',
+                'style': 'max-width: 500px;',
                 'placeholder': 'Digite a senha novamente'
             })
         }
@@ -45,12 +45,12 @@ class EstudanteProfileForm(forms.ModelForm):
         widgets = {
             'matricula': TextInput(attrs={
                 'class': "form-control", 
-                'style': 'max-width: 300px;',
+                'style': 'max-width: 500px;',
                 'placeholder': 'Digite o Nº de matrícula'
             }),
             'curso': Select(attrs={
                 'class': "form-control", 
-                'style': 'max-width: 300px;',
+                'style': 'max-width: 500px;',
                 'choices': Curso,
             })
         }
@@ -65,7 +65,7 @@ class ProfessorProfileForm(forms.ModelForm):
         widgets = {
             'campoextra': TextInput(attrs={
                 'class': "form-control", 
-                'style': 'max-width: 300px;',
+                'style': 'max-width: 500px;',
                 'placeholder': 'Digite o campo extra do professor'
             })
         }
@@ -82,12 +82,12 @@ class CursoForm(ModelForm):
         widgets = {
             'nome': TextInput(attrs={
                 'class': "form-control",
-                'style': 'max-width: 300px;',
+                'style': 'max-width: 500px;',
                 'placeholder': 'Digite o nome do curso'
                 }),
             'descricao': Textarea(attrs={
                 'class': "form-control", 
-                'style': 'max-width: 300px;',
+                'style': 'max-width: 500px;',
                 'placeholder': 'Digite uma breve descrição do curso'
                 })
         }
@@ -104,12 +104,12 @@ class EscolherCursoForm(forms.Form):
         #cursos = Professor_curso.objects.filter(professor = self.user.id)
 
     cursos = Curso.objects.all()
-    curso = forms.ModelChoiceField(label="Curso", queryset=cursos, widget=forms.Select(attrs={'class': 'form-control', 'style': 'max-width: 300px;'}))
+    curso = forms.ModelChoiceField(label="Curso", queryset=cursos, widget=forms.Select(attrs={'class': 'form-control', 'style': 'max-width: 500px;'}))
 
 
 
 
 class LoginForm(AuthenticationForm):
     required_css_class = 'required'
-    username = forms.CharField(label="E-mail", widget=forms.EmailInput(attrs={'class': 'form-control', 'style': 'max-width: 300px;', 'placeholder': 'Digite o e-mail'}))
-    password = forms.CharField(label="Senha", widget=forms.PasswordInput(attrs={'class': 'form-control', 'style': 'max-width: 300px;', 'placeholder': 'Digite a senha'}))
+    username = forms.CharField(label="E-mail", widget=forms.EmailInput(attrs={'class': 'form-control', 'style': 'max-width: 500px;', 'placeholder': 'Digite o e-mail'}))
+    password = forms.CharField(label="Senha", widget=forms.PasswordInput(attrs={'class': 'form-control', 'style': 'max-width: 500px;', 'placeholder': 'Digite a senha'}))

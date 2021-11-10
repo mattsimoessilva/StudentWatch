@@ -4,10 +4,10 @@
         <form action="{% url 'visualizarPresenca' %}" method="POST">
             {% csrf_token %}
             <fieldset class="form-group">
-                <legend class="border-bottom mb-4">Escolher um curso</legend>
+                <legend class="border-bottom mb-4">Escolha um curso</legend>
                     {{form.as_p}}
             </fieldset>
-            <div class="form-group">
+            <div class="form-group text-center">
                 <button class="btn btn-outline-info" type="submit">Confirmar</button>
             </div>
         </form>
