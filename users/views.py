@@ -148,9 +148,8 @@ def registrarPresenca(request):
 @login_required
 @permission_required("users.view_presenca", raise_exception=True)
 def visualizarPresenca(request):
-    form = EscolherCursoForm()
     if request.method=='POST':
-        form = EscolherCursoForm(request.POST)
+        form = EscolherCursoForm(request.POST, user=request.user)
         if form.is_valid():
             dados = form.cleaned_data
             curso = dados.get('curso')
@@ -174,8 +173,8 @@ def visualizarPresenca(request):
 @login_required
 @permission_required("users.view_presenca", raise_exception=True)
 def escolherCurso(request):
-    #form = EscolherCursoForm(user=request.user)
-    form = EscolherCursoForm()
+    form = EscolherCursoForm(user=request.user)
+    #form = EscolherCursoForm()
     return render(request, 'users/escolher-curso.html', {'form': form})
 
 

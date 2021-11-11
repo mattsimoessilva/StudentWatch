@@ -1,3 +1,4 @@
+from io import TextIOBase, UnsupportedOperation
 from django import forms
 from django.forms import ModelForm, TextInput, Textarea, EmailInput, Select, PasswordInput
 from .models import Curso, Disciplina, ProfessorProfile, EstudanteProfile, Professor_curso
@@ -97,14 +98,19 @@ class CursoForm(ModelForm):
 
 class EscolherCursoForm(forms.Form): 
 
-    #def __init__(self, *args, **kwargs):
-        #self.user = kwargs.pop('user', None)
-        #super(EscolherCursoForm, self).__init__(*args, **kwargs) 
-         
-        #cursos = Professor_curso.objects.filter(professor = self.user.id)
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super(EscolherCursoForm, self).__init__(*args, **kwargs) 
 
-    cursos = Curso.objects.all()
-    curso = forms.ModelChoiceField(label="Curso", queryset=cursos, widget=forms.Select(attrs={'class': 'form-control', 'style': 'max-width: 500px;'}))
+        lista_profiles = ProfessorProfile.objects.all()
+        for x in range(0, len(lista_profiles), 1):
+            if(lista_profiles[x].user == self.user):
+                profile_id = lista_profiles[x].id
+
+        cursos = Professor_curso.objects.filter(professor = profile_id)
+
+    #cursos = Curso.objects.all()
+        self.fields['curso'] = forms.ModelChoiceField(label="Curso", queryset=cursos, widget=forms.Select(attrs={'class': 'form-control', 'style': 'max-width: 500px;'}))
 
 
 

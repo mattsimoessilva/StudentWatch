@@ -90,7 +90,7 @@ class Professor_curso(models.Model):
     curso = models.ForeignKey(Curso, on_delete=models.DO_NOTHING, null=True)
 
     def __str__(self):
-        return str(self.professor)  
+        return str(self.curso)  
         
 
 #SIGNAL STUFF TO ASSOCIATE THE USER MODEL WITH THE USER PROFILES
