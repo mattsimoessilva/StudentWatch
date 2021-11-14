@@ -1,11 +1,11 @@
 from django.shortcuts import redirect, render
-from .forms import CursoForm, ProfessorProfileForm, EstudanteProfileForm, UserForm, LoginForm, EscolherCursoForm
+from .forms import CursoForm, ProfessorProfileForm, EstudanteProfileForm, UserForm, LoginForm, FiltrarPresencaForm2
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.models import Permission
 from django.urls import reverse_lazy
-from .models import Presenca, Professor_curso, Turno, Aula, EstudanteProfile
+from .models import Presenca, Professor_curso, Turno, Aula, EstudanteProfile, Disciplina
 import datetime
 import calendar
 
@@ -57,7 +57,8 @@ def professor_profile_view(request):
             user.professor_profile.campoextra = profile_form.cleaned_data.get('campoextra')
             user.professor_profile.save()
             permission = Permission.objects.get(codename='view_presenca')
-            user.user_permissions.add(permission)
+            permission2 = Permission.objects.get(codename='view_aula')
+            user.user_permissions.add(permission, permission2)
 
             nome = user_form.cleaned_data.get('username')
             messages.success(request, f"Professor '{nome}' cadastrado")
@@ -149,33 +150,48 @@ def registrarPresenca(request):
 @permission_required("users.view_presenca", raise_exception=True)
 def visualizarPresenca(request):
     if request.method=='POST':
-        form = EscolherCursoForm(request.POST, user=request.user)
+        form = FiltrarPresencaForm2(request.POST, user = request.user)
         if form.is_valid():
+            print("2")
             dados = form.cleaned_data
+            disciplina = dados.get('disciplina')
             curso = dados.get('curso')
             usuario = request.user
 
             presencas = []
             lista_presencas = Presenca.objects.all()
+
             for x in range(len(lista_presencas)-1, -1, -1):
-                if(lista_presencas[x].aula.disciplina.professor.user == usuario and lista_presencas[x].aula.disciplina.curso.nome == str(curso)):
+                if(lista_presencas[x].aula.disciplina.professor.user == usuario and lista_presencas[x].aula.disciplina == disciplina):
                     presencas.append(lista_presencas[x])
 
             context = {
-                'presencas': presencas
+                'presencas': presencas,
+                'curso': curso
             }
     else:
-        return redirect('escolherCurso')
+        return redirect('filtrarPresenca')
     
     return render(request, 'users/visualizar-presenca.html', context)
 
 
+def load_disciplinas(request):
+    curso_id = request.GET.get('curso')
+    disciplinas = Disciplina.objects.filter(curso_id=curso_id)
+    return render(request, 'users/disciplina_dropdown.html', {'disciplinas': disciplinas})
+
+
 @login_required
 @permission_required("users.view_presenca", raise_exception=True)
-def escolherCurso(request):
-    form = EscolherCursoForm(user=request.user)
-    #form = EscolherCursoForm()
-    return render(request, 'users/escolher-curso.html', {'form': form})
+def filtrarPresenca(request):
+    form = FiltrarPresencaForm2(user=request.user)
+    return render(request, 'users/filtrar-presenca.html', {'form': form})
+
+
+@login_required
+@permission_required("users.view_aula", raise_exception=True)
+def listarAula(request):
+    return render(request, 'users/listar-aula.html')
 
 
 class LoginView(auth_views.LoginView):

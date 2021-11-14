@@ -1,0 +1,5 @@
+<option value selected>---------</option>
+
+{% for disciplina in disciplinas %}
+    <option value="{{ disciplina.id }}">{{ disciplina.nome }}</option>
+{% endfor %}

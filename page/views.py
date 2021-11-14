@@ -5,7 +5,7 @@ def home(request):
     if (request.user.is_authenticated and request.user.tipo == "Estudante"):
         return redirect('registrarPresenca')
     elif(request.user.is_authenticated and request.user.tipo == "Professor"):
-        return redirect('escolherCurso')
+        return redirect('filtrarPresenca')
     else:
         return render(request, 'page/home.html')
 

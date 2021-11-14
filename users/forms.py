@@ -96,11 +96,11 @@ class CursoForm(ModelForm):
             'descricao': 'Descrição'
         }
 
-class EscolherCursoForm(forms.Form): 
 
+class FiltrarPresencaForm2(forms.Form):
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
-        super(EscolherCursoForm, self).__init__(*args, **kwargs) 
+        super(FiltrarPresencaForm2, self).__init__(*args, **kwargs) 
 
         lista_profiles = ProfessorProfile.objects.all()
         for x in range(0, len(lista_profiles), 1):
@@ -109,9 +109,16 @@ class EscolherCursoForm(forms.Form):
 
         cursos = Professor_curso.objects.filter(professor = profile_id)
 
-    #cursos = Curso.objects.all()
         self.fields['curso'] = forms.ModelChoiceField(label="Curso", queryset=cursos, widget=forms.Select(attrs={'class': 'form-control', 'style': 'max-width: 500px;'}))
 
+        self.fields['disciplina'] = forms.ModelChoiceField(label="Disciplina", queryset=Disciplina.objects.none(), widget=forms.Select(attrs={'class': 'form-control', 'style': 'max-width: 500px;'}))
+
+        if 'curso' in self.data:
+            try:
+                curso_id = int(self.data.get('curso'))
+                self.fields['disciplina'] = forms.ModelChoiceField(label="Disciplina", queryset=Disciplina.objects.filter(curso_id=curso_id), widget=forms.Select(attrs={'class': 'form-control', 'style': 'max-width: 500px;'}))
+            except (ValueError, TypeError):
+                pass  # invalid input from the client; ignore and fallback to empty City queryset
 
 
 

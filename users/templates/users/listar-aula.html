@@ -1,0 +1,31 @@
+{% extends "page/base.html" %}
+{% block content %}
+    <div class="content-section">
+        <form method="POST">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Aulas de Engenharia de Requisitos</legend>
+            </fieldset>
+            <div class="content-section">
+                <table class="table table-bordered">
+                    <tr>
+                        <td>
+
+                        </td>
+                        <td>
+                            Noturno
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+
+                        </td>
+                        <td>
+                            Tuesday
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </form>
+    </div>
+{% endblock content %}
