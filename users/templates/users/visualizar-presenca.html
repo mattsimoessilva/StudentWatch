@@ -1,5 +1,6 @@
 {% extends "page/base.html" %}
 {% block content %}
+{% if presencas != None %}
     <div class="content-section">
         <fieldset class="form-group">
             <legend class="border-bottom mb-4">Lista de presença de {{ curso }}</legend>
@@ -37,5 +38,6 @@
             </table>
         </fieldset>
     </div>
+{% endif %}
 {% endblock content %}
 

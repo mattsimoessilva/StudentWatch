@@ -156,14 +156,19 @@ def visualizarPresenca(request):
             dados = form.cleaned_data
             disciplina = dados.get('disciplina')
             curso = dados.get('curso')
+            data = dados.get('data')
             usuario = request.user
 
             presencas = []
             lista_presencas = Presenca.objects.all()
 
             for x in range(len(lista_presencas)-1, -1, -1):
-                if(lista_presencas[x].aula.disciplina.professor.user == usuario and lista_presencas[x].aula.disciplina == disciplina):
+                if(lista_presencas[x].aula.disciplina.professor.user == usuario and lista_presencas[x].aula.disciplina == disciplina  and lista_presencas[x].data == data):
                     presencas.append(lista_presencas[x])
+                   
+            if(presencas == []):
+                presencas = None
+                messages.warning(request, f"Não há registros de presença")
 
             context = {
                 'presencas': presencas,

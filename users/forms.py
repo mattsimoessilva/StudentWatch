@@ -113,6 +113,8 @@ class FiltrarPresencaForm2(forms.Form):
 
         self.fields['disciplina'] = forms.ModelChoiceField(label="Disciplina", queryset=Disciplina.objects.none(), widget=forms.Select(attrs={'class': 'form-control', 'style': 'max-width: 500px;'}))
 
+        self.fields['data'] = forms.DateField(label="Data", widget=forms.DateInput(attrs={'class': 'form-control', 'style': 'max-width: 500px;'}))
+
         if 'curso' in self.data:
             try:
                 curso_id = int(self.data.get('curso'))

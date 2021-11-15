@@ -15,6 +15,15 @@
     <!-- Google Material Design CSS -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
+    <!-- JQuery CSS -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
+
+    <!-- JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
     {% if title %}
         <title>StudentWatch - {{ title }}</title>
     {% else %}
@@ -32,9 +41,9 @@
             <div class="collapse navbar-collapse" id="navbarToggle">
               <div class="navbar-nav mr-auto">
                 {% if user.is_authenticated and user.tipo == "Coordenador" %}
-                <a class="nav-item nav-link" href="{% url 'cadastrarProfessor' %}">Cadastrar Professor</a>
-                <a class="nav-item nav-link" href="{% url 'cadastrarEstudante' %}">Cadastrar Estudante</a>
-              {% endif %}
+                  <a class="nav-item nav-link" href="{% url 'logout' %}"><span class="material-icons">book</span>Gerenciar Disciplinas</a>
+                  <a class="nav-item nav-link" href="{% url 'logout' %}"><span class="material-icons">assignment</span>Gerenciar Aulas</a>
+                {% endif %}
               </div>
               <!-- Navbar Right Side -->
               <div class="navbar-nav">
@@ -65,11 +74,5 @@
           <div class="col-sm-3"></div>
         </div>
       </main>
-
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-   
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 </body>
 </html>
