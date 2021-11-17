@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
+from django.urls import reverse
 
 
 #CUSTOM USER MODEL
@@ -52,6 +53,9 @@ class Disciplina(models.Model):
     def __str__(self):
         return self.nome
 
+    def get_absolute_url(self):
+        return reverse('disciplina-detail', kwargs={'pk': self.pk})
+
 class Dia_semana(models.Model):
     nome = models.CharField(max_length=50)
 
@@ -87,6 +91,13 @@ class Presenca(models.Model):
 
 class Professor_curso(models.Model):
     professor = models.ForeignKey(ProfessorProfile, on_delete=models.DO_NOTHING, null=True) 
+    curso = models.ForeignKey(Curso, on_delete=models.DO_NOTHING, null=True)
+
+    def __str__(self):
+        return str(self.curso)  
+
+class Coordenador_curso(models.Model):
+    coordenador = models.ForeignKey(CoordenadorProfile, on_delete=models.DO_NOTHING, null=True) 
     curso = models.ForeignKey(Curso, on_delete=models.DO_NOTHING, null=True)
 
     def __str__(self):

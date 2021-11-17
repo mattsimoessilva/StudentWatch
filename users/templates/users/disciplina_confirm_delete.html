@@ -1,0 +1,16 @@
+{% extends "page/base.html" %}
+{% block content %}
+    <div class="content-section">
+        <form method="POST">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Deletar Disciplina</legend>
+                <p>Você tem certeza de que deseja deletar a disciplina "{{ object.nome }}"?</p>
+            </fieldset>
+            <div class="form-group text-center">
+                <button class="btn btn-outline-danger" type="submit">Deletar</button>
+                <a class="btn btn-outline-secondary" href="{% url 'disciplina-detail' object.id %}">Cancelar</a>
+            </div>
+        </form>
+    </div>
+{% endblock content %}

@@ -48,4 +48,10 @@
         {% endif %}
     {% endif %}
     </div>
+    <form method="POST" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <div class="form-group text-center">
+            <button class="btn btn-outline-info" type="submit">Sair do Sistema</button>
+        </div>
+    </form>
 {% endblock content %}

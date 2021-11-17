@@ -1,5 +1,11 @@
 {% extends "page/base.html" %}
 {% block content %}
+<form method="POST" action="{% url 'filtrarPresenca' %}">
+    {% csrf_token %}
+    <div class="form-group text-center">
+        <button class="btn btn-outline-info" type="submit">Voltar</button>
+    </div>
+</form>
 {% if presencas != None %}
     <div class="content-section">
         <fieldset class="form-group">

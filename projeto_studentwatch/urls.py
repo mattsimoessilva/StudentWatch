@@ -18,7 +18,13 @@ from django.contrib.auth import views as auth_views
 from django.urls import path, include
 from users import views as user_views
 
-from users.views import LoginView
+from users.views import (
+    LoginView,
+    DisciplinaDetailView,
+    DisciplinaCreateView,
+    DisciplinaUpdateView,
+    DisciplinaDeleteView
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,7 +32,12 @@ urlpatterns = [
     path('registrarPresenca/', user_views.registrarPresenca, name='registrarPresenca'),
     path('filtrarPresenca/', user_views.filtrarPresenca, name='filtrarPresenca'),
     path('visualizarPresenca/', user_views.visualizarPresenca, name='visualizarPresenca'),
-    path('listarAula/', user_views.listarAula, name='listarAula'),
+    path('filtrarDisciplina/', user_views.filtrarDisciplina, name='filtrarDisciplina'),
+    path('gerenciarDisciplina/', user_views.gerenciarDisciplina, name='gerenciarDisciplina'),
+    path('disciplina/<int:pk>/', DisciplinaDetailView.as_view(), name='disciplina-detail'),
+    path('disciplina/<int:pk>/delete/', DisciplinaDeleteView.as_view(), name='disciplina-delete'),
+    path('disciplina/new/', DisciplinaCreateView.as_view(), name='disciplina-create'),
+    path('disciplina/<int:pk>/update/', DisciplinaUpdateView.as_view(), name='disciplina-update'),
     path('cadastrarProfessor/', user_views.professor_profile_view, name='cadastrarProfessor'),
     path('cadastrarEstudante/', user_views.estudante_profile_view, name='cadastrarEstudante'),
     path('login/', LoginView.as_view(template_name='users/login.html'), name='login'),

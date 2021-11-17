@@ -1,5 +1,12 @@
 from django.shortcuts import redirect, render
-from .forms import CursoForm, ProfessorProfileForm, EstudanteProfileForm, UserForm, LoginForm, FiltrarPresencaForm2
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import(
+    DetailView,
+    CreateView,
+    UpdateView,
+    DeleteView
+)
+from .forms import CursoForm, ProfessorProfileForm, EstudanteProfileForm, UserForm, LoginForm, FiltrarPresencaForm2, FiltrarDisciplinaForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth import views as auth_views
@@ -152,7 +159,6 @@ def visualizarPresenca(request):
     if request.method=='POST':
         form = FiltrarPresencaForm2(request.POST, user = request.user)
         if form.is_valid():
-            print("2")
             dados = form.cleaned_data
             disciplina = dados.get('disciplina')
             curso = dados.get('curso')
@@ -194,10 +200,56 @@ def filtrarPresenca(request):
 
 
 @login_required
-@permission_required("users.view_aula", raise_exception=True)
-def listarAula(request):
-    return render(request, 'users/listar-aula.html')
+@permission_required("users.view_disciplina", raise_exception=True)
+def gerenciarDisciplina(request):
+    if request.method=='POST':
+        form = FiltrarDisciplinaForm(request.POST, user = request.user)
+        if form.is_valid():
+            dados = form.cleaned_data
+            curso = dados.get('curso')
 
+            disciplinas = []
+            lista_disciplinas = Disciplina.objects.all()
+
+            for x in range(len(lista_disciplinas)-1, -1, -1):
+                if(lista_disciplinas[x].curso.nome == str(curso)):
+                    disciplinas.append(lista_disciplinas[x])
+                   
+            if(disciplinas == []):
+                disciplinas = None
+                messages.warning(request, f"Não há disciplinas")
+
+            context = {
+                'disciplinas': disciplinas,
+                'curso': curso
+            }
+    else:
+        return redirect('filtrarDisciplina')
+    
+    return render(request, 'users/gerenciar-disciplina.html', context)
+
+
+@login_required
+@permission_required("users.view_disciplina", raise_exception=True)
+def filtrarDisciplina(request):
+    form = FiltrarDisciplinaForm(user=request.user)
+    return render(request, 'users/filtrar-disciplina.html', {'form': form})
+
+
+class DisciplinaDetailView(LoginRequiredMixin, DetailView):
+    model = Disciplina
+
+class DisciplinaCreateView(LoginRequiredMixin, CreateView):
+    model = Disciplina
+    fields = ['nome', 'professor', 'curso']
+
+class DisciplinaUpdateView(LoginRequiredMixin, UpdateView):
+    model = Disciplina
+    fields = ['nome', 'professor', 'curso']
+
+class DisciplinaDeleteView(LoginRequiredMixin, DeleteView):
+    model = Disciplina
+    success_url = '/'
 
 class LoginView(auth_views.LoginView):
     form_class = LoginForm

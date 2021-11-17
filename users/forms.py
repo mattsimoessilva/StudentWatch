@@ -1,7 +1,7 @@
 from io import TextIOBase, UnsupportedOperation
 from django import forms
 from django.forms import ModelForm, TextInput, Textarea, EmailInput, Select, PasswordInput
-from .models import Curso, Disciplina, ProfessorProfile, EstudanteProfile, Professor_curso
+from .models import Curso, Disciplina, ProfessorProfile, EstudanteProfile, Professor_curso, CoordenadorProfile, Coordenador_curso
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import get_user_model
 
@@ -121,6 +121,20 @@ class FiltrarPresencaForm2(forms.Form):
                 self.fields['disciplina'] = forms.ModelChoiceField(label="Disciplina", queryset=Disciplina.objects.filter(curso_id=curso_id), widget=forms.Select(attrs={'class': 'form-control', 'style': 'max-width: 500px;'}))
             except (ValueError, TypeError):
                 pass  # invalid input from the client; ignore and fallback to empty City queryset
+
+class FiltrarDisciplinaForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super(FiltrarDisciplinaForm, self).__init__(*args, **kwargs) 
+
+        lista_profiles = CoordenadorProfile.objects.all()
+        for x in range(0, len(lista_profiles), 1):
+            if(lista_profiles[x].user == self.user):
+                profile_id = lista_profiles[x].id
+
+        cursos = Coordenador_curso.objects.filter(coordenador = profile_id)
+
+        self.fields['curso'] = forms.ModelChoiceField(label="Curso", queryset=cursos, widget=forms.Select(attrs={'class': 'form-control', 'style': 'max-width: 500px;'}))
 
 
 

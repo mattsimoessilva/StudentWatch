@@ -1,0 +1,13 @@
+{% extends "page/base.html" %}
+{% block content %}
+    <div class="content-section">
+        <fieldset class="form-group">
+            <a class="btn btn-info btn-sm" href="{% url 'disciplina-update' object.id %}"><span class="material-icons">edit</span></a>
+            <a class="btn btn-danger btn-sm ml-2" href="{% url 'disciplina-delete' object.id %}"><span class="material-icons">clear</span></a>
+        </fieldset>
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4"><span class="material-icons">book</span> {{ object.nome }}</legend>
+            <p><span class="material-icons">face</span> {{ object.professor }}</p>
+            <p><span class="material-icons">source</span> {{ object.curso }}</p>
+    </div>
+{% endblock content %}
