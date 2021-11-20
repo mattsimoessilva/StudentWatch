@@ -17,9 +17,13 @@ from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import path, include
 from users import views as user_views
+from manager import views as manager_views
 
 from users.views import (
-    LoginView,
+    LoginView
+)
+
+from manager.views import (
     DisciplinaDetailView,
     DisciplinaCreateView,
     DisciplinaUpdateView,
@@ -28,12 +32,12 @@ from users.views import (
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('cadastrarCurso/', user_views.cadastrarCurso, name='cadastrarCurso'),
+    path('cadastrarCurso/', manager_views.cadastrarCurso, name='cadastrarCurso'),
     path('registrarPresenca/', user_views.registrarPresenca, name='registrarPresenca'),
     path('filtrarPresenca/', user_views.filtrarPresenca, name='filtrarPresenca'),
     path('visualizarPresenca/', user_views.visualizarPresenca, name='visualizarPresenca'),
-    path('filtrarDisciplina/', user_views.filtrarDisciplina, name='filtrarDisciplina'),
-    path('gerenciarDisciplina/', user_views.gerenciarDisciplina, name='gerenciarDisciplina'),
+    path('filtrarDisciplina/', manager_views.filtrarDisciplina, name='filtrarDisciplina'),
+    path('gerenciarDisciplina/', manager_views.gerenciarDisciplina, name='gerenciarDisciplina'),
     path('disciplina/<int:pk>/', DisciplinaDetailView.as_view(), name='disciplina-detail'),
     path('disciplina/<int:pk>/delete/', DisciplinaDeleteView.as_view(), name='disciplina-delete'),
     path('disciplina/new/', DisciplinaCreateView.as_view(), name='disciplina-create'),
@@ -44,7 +48,7 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(template_name='users/logout.html'), name='logout'),
     path('', include('page.urls')),
 
-    path('ajax/load-disciplinas/', user_views.load_disciplinas, name='ajax_load_disciplinas'),
+    path('ajax/load-disciplinas/', manager_views.load_disciplinas, name='ajax_load_disciplinas'),
 ]
 
 handler403 = 'users.views.error_403_view'

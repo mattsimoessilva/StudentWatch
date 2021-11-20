@@ -96,3 +96,12 @@ body {
   border-color: #4675b8 !important;
   color: #4675b8 !important;
 }
+
+.dropdown-menu a:hover {
+  background-color: #4675b8;
+  color: white !important;
+}
+
+.dropdown-menu a {
+  color: #cbd5db !important;
+}
