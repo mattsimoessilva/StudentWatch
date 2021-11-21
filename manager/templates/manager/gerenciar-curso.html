@@ -1,0 +1,20 @@
+{% extends "page/base.html" %}
+{% block content %}
+{% if cursos != None %}
+    <div class="content-section">
+        <fieldset class="form-group">
+            <a class="btn btn-info btn-sm mb-4" href="{% url 'curso-create' %}"><span class="material-icons">add</span></a>
+            <legend class="border-bottom mb-4">Cursos</legend>
+            <table class="table table-bordered">
+                {% for curso in cursos %} 
+                <tr>
+                    <td>
+                        <a href="{% url 'curso-detail' curso.id %}"><span class="material-icons">assignment</span> {{ curso.nome }}</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </fieldset>
+    </div>
+{% endif %}
+{% endblock content %}

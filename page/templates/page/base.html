@@ -49,7 +49,8 @@
                     <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><span class="material-icons">space_dashboard</span> Gerenciar</a>
                     <div class="dropdown-menu border-0 bg-steel">
                       <a class="dropdown-item" href="{% url 'filtrarDisciplina' %}"><span class="material-icons">book</span> Disciplinas</a>
-                      <a class="dropdown-item" href="#"><span class="material-icons">assignment</span> Aulas</a>
+                      <a class="dropdown-item" href="{% url 'filtrarAula' %}"><span class="material-icons">assignment</span> Aulas</a>
+                      <a class="dropdown-item" href="{% url 'gerenciarCurso' %}"><span class="material-icons">source</span> Cursos</a>
                       <a class="dropdown-item" href="{% url 'cadastrarEstudante' %}"><span class="material-icons">person</span> Estudantes</a>
                       <a class="dropdown-item" href="{% url 'cadastrarProfessor' %}"><span class="material-icons">face</span> Professores</a>
                     </div>

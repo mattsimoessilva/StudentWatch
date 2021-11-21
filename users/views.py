@@ -9,6 +9,7 @@ from .models import EstudanteProfile
 from manager.models import Presenca, Turno, Aula
 import datetime
 import calendar
+from manager.models import Disciplina
 
 
 @login_required
@@ -164,6 +165,10 @@ def visualizarPresenca(request):
     
     return render(request, 'users/visualizar-presenca.html', context)
 
+def load_disciplinas(request):
+    curso_id = request.GET.get('curso')
+    disciplinas = Disciplina.objects.filter(curso_id=curso_id)
+    return render(request, 'users/disciplina_dropdown.html', {'disciplinas': disciplinas})
 
 @login_required
 @permission_required("manager.view_presenca", raise_exception=True)

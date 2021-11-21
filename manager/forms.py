@@ -8,15 +8,19 @@ class FiltrarDisciplinaForm(forms.Form):
         self.user = kwargs.pop('user', None)
         super(FiltrarDisciplinaForm, self).__init__(*args, **kwargs) 
 
-        lista_profiles = CoordenadorProfile.objects.all()
-        for x in range(0, len(lista_profiles), 1):
-            if(lista_profiles[x].user == self.user):
-                profile_id = lista_profiles[x].id
-
-        #cursos = Coordenador_curso.objects.filter(coordenador = profile_id)
         cursos = Curso.objects.all()
 
-        self.fields['curso'] = forms.ModelChoiceField(label="Curso", queryset=cursos, widget=forms.Select(attrs={'class': 'form-control', 'style': 'max-width: 500px;'}))
+        self.fields['curso'] = forms.ModelChoiceField(label="Curso", queryset=cursos)
+
+
+class FiltrarAulaForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super(FiltrarAulaForm, self).__init__(*args, **kwargs) 
+
+        cursos = Curso.objects.all()
+
+        self.fields['curso'] = forms.ModelChoiceField(label="Curso", queryset=cursos)
 
 
 class CursoForm(ModelForm):

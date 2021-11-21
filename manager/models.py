@@ -2,7 +2,7 @@ from django.db import models
 from users.models import EstudanteProfile, ProfessorProfile, CoordenadorProfile
 from django.urls import reverse
 
-#SOME CLASSES
+
 class Curso(models.Model):
     nome = models.CharField(max_length=100)
     descricao = models.TextField(max_length=500)
@@ -44,7 +44,6 @@ class Aula(models.Model):
     def __str__(self):
         return self.disciplina.nome
 
-#MORE CLASSES
 class Presenca(models.Model):
     estudante = models.ForeignKey(EstudanteProfile, on_delete=models.DO_NOTHING, null=True)
     data = models.DateField()
@@ -60,10 +59,4 @@ class Professor_curso(models.Model):
     def __str__(self):
         return str(self.curso)  
 
-class Coordenador_curso(models.Model):
-    coordenador = models.ForeignKey(CoordenadorProfile, on_delete=models.DO_NOTHING, null=True) 
-    curso = models.ForeignKey(Curso, on_delete=models.DO_NOTHING, null=True)
-
-    def __str__(self):
-        return str(self.curso)  
         

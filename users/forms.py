@@ -1,7 +1,7 @@
 from io import TextIOBase, UnsupportedOperation
 from django import forms
 from django.forms import ModelForm, TextInput, Textarea, EmailInput, Select, PasswordInput
-from manager.models import Curso, Disciplina, Professor_curso, Coordenador_curso
+from manager.models import Curso, Disciplina, Professor_curso
 from .models import ProfessorProfile, EstudanteProfile, CoordenadorProfile
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import get_user_model
