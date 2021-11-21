@@ -64,6 +64,7 @@ class DisciplinaDeleteView(LoginRequiredMixin, DeleteView):
     success_url = '/'
 
 
+
 #GERENCIAMENTO DE AULAS
 @login_required
 @permission_required("manager.view_aula", raise_exception=True)
