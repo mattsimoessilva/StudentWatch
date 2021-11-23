@@ -2,10 +2,10 @@
 {% load crispy_forms_tags %}
 {% block content %}
     <div class="content-section">
-        <form method="POST" action="{% url 'gerenciarAula' %}">
+        <form method="POST" action="{% url 'gerenciarProfessor' %}">
             {% csrf_token %}
             <fieldset class="form-group">
-                <legend class="border-bottom mb-4">Escolha o curso da Aula</legend>
+                <legend class="border-bottom mb-4">Escolha o curso dos Professores</legend>
                     {{form|crispy}}
             </fieldset>
             <div class="form-group text-center">

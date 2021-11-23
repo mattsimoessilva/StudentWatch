@@ -23,7 +23,13 @@ from .views import (
     #GERENCIAMENTO DE ESTUDANTES
     EstudanteDetailView,
     EstudanteDeleteView,
-    EstudanteUpdateView
+    EstudanteUpdateView,
+
+    #GERENCIAMENTO DE PROFESSORES
+    ProfessorDetailView,
+    ProfessorDeleteView,
+    ProfessorCreateView,
+    ProfessorUpdateView
 )
 
 urlpatterns = [
@@ -57,4 +63,12 @@ urlpatterns = [
     path('estudante/<int:pk>/', EstudanteDetailView.as_view(), name='estudante-detail'),
     path('estudante/<int:pk>/delete/', EstudanteDeleteView.as_view(), name='estudante-delete'),
     path('estudante/<int:pk>/update/', EstudanteUpdateView.as_view(), name='estudante-update'),
+
+    #GERENCIAMENTO DE PROFESSORES
+    path('filtrarProfessor/', views.filtrarProfessor, name='filtrarProfessor'),
+    path('gerenciarProfessor/', views.gerenciarProfessor, name='gerenciarProfessor'),
+    path('professor/<int:pk>/', ProfessorDetailView.as_view(), name='professor-detail'),
+    path('professor/<int:pk>/delete/', ProfessorDeleteView.as_view(), name='professor-delete'),
+    path('professor/<int:pk>/new/', ProfessorCreateView.as_view(), name='professor-create'),
+    path('professor/<int:pk>/update/', ProfessorUpdateView.as_view(), name='professor-update'),
 ]

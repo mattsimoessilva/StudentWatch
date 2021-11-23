@@ -13,33 +13,5 @@
                 <button class="btn btn-outline-info" type="submit">Editar</button>
             </div>
         </form>
-        {% if user_form.errors %}
-        {% for field in user_form %}
-            {% for error in field.errors %}
-                <div class="alert alert-danger">
-                    <strong>{{ error|escape }}</strong>
-                </div>
-            {% endfor %}
-        {% endfor %}
-        {% for error in form.non_field_errors %}
-            <div class="alert alert-danger">
-                <strong>{{ error|escape }}</strong>
-            </div>
-        {% endfor %}
-        {% endif %}
-        {% if profile_form.errors %}
-        {% for field in profile_form %}
-            {% for error in field.errors %}
-                <div class="alert alert-danger">
-                    <strong>{{ error|escape }}</strong>
-                </div>
-            {% endfor %}
-        {% endfor %}
-        {% for error in form.non_field_errors %}
-            <div class="alert alert-danger">
-                <strong>{{ error|escape }}</strong>
-            </div>
-        {% endfor %}
-        {% endif %}
     </div>
 {% endblock content %}

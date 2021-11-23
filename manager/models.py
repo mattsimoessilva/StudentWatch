@@ -53,8 +53,8 @@ class Presenca(models.Model):
         return str(self.estudante)
 
 class Professor_curso(models.Model):
-    professor = models.ForeignKey(ProfessorProfile, on_delete=models.DO_NOTHING, null=True) 
-    curso = models.ForeignKey(Curso, on_delete=models.DO_NOTHING, null=True)
+    professor = models.ForeignKey(ProfessorProfile, on_delete=models.CASCADE, null=True) 
+    curso = models.ForeignKey(Curso, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return str(self.curso)  

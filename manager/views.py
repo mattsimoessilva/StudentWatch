@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import Permission
 from django.views.generic import(
     DetailView,
     CreateView,
@@ -12,17 +13,17 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 
 from users.models import EstudanteProfile
-from .forms import FiltrarDisciplinaForm, CursoForm, FiltrarAulaForm, FiltrarEstudanteForm
-from .models import Disciplina, Aula, Curso
-from users.models import User, EstudanteProfile
-from users.forms import UserForm, EstudanteProfileForm
+from .forms import CursoForm, EscolherCursoForm
+from .models import Disciplina, Aula, Curso, Professor_curso
+from users.models import User, EstudanteProfile, ProfessorProfile
+from users.forms import UserForm, EstudanteProfileForm, ProfessorProfileForm
 
 #GERENCIAMENTO DE DISCIPLINAS
 @login_required
 @permission_required("manager.view_disciplina", raise_exception=True)
 def gerenciarDisciplina(request):
     if request.method=='POST':
-        form = FiltrarDisciplinaForm(request.POST, user = request.user)
+        form = EscolherCursoForm(request.POST, user = request.user)
         if form.is_valid():
             dados = form.cleaned_data
             curso = dados.get('curso')
@@ -50,7 +51,7 @@ def gerenciarDisciplina(request):
 @login_required
 @permission_required("manager.view_disciplina", raise_exception=True)
 def filtrarDisciplina(request):
-    form = FiltrarDisciplinaForm(user=request.user)
+    form = EscolherCursoForm(user=request.user)
     return render(request, 'manager/filtrar-disciplina.html', {'form': form})
 
 class DisciplinaDetailView(LoginRequiredMixin, DetailView):
@@ -75,7 +76,7 @@ class DisciplinaDeleteView(LoginRequiredMixin, DeleteView):
 @permission_required("manager.view_aula", raise_exception=True)
 def gerenciarAula(request):
     if request.method=='POST':
-        form = FiltrarAulaForm(request.POST, user = request.user)
+        form = EscolherCursoForm(request.POST, user = request.user)
         if form.is_valid():
             dados = form.cleaned_data
             curso = dados.get('curso')
@@ -105,7 +106,7 @@ def gerenciarAula(request):
 @login_required
 @permission_required("users.view_aula", raise_exception=True)
 def filtrarAula(request):
-    form = FiltrarAulaForm(user=request.user)
+    form = EscolherCursoForm(user=request.user)
     return render(request, 'manager/filtrar-aula.html', {'form': form})
 
 class AulaDetailView(LoginRequiredMixin, DetailView):
@@ -174,14 +175,12 @@ class CursoDeleteView(LoginRequiredMixin, DeleteView):
 @permission_required("manager.view_estudante_profile", raise_exception=True)
 def gerenciarEstudante(request):
     if request.method=='POST':
-        form = FiltrarEstudanteForm(request.POST, user = request.user)
+        form = EscolherCursoForm(request.POST, user = request.user)
         if form.is_valid():
             dados = form.cleaned_data
             curso = dados.get('curso')
-
-            users = []
+        
             estudantes = []
-            lista_users = User.objects.all()
             lista_estudanteprofile = EstudanteProfile.objects.all()
 
             for x in range(len(lista_estudanteprofile)-1, -1, -1):
@@ -206,7 +205,7 @@ def gerenciarEstudante(request):
 @login_required
 @permission_required("users.view_estudante_profile", raise_exception=True)
 def filtrarEstudante(request):
-    form = FiltrarEstudanteForm(user=request.user)
+    form = EscolherCursoForm(user=request.user)
     return render(request, 'manager/filtrar-estudante.html', {'form': form})
 
 class EstudanteDetailView(LoginRequiredMixin, DetailView):
@@ -218,8 +217,6 @@ class EstudanteDeleteView(DeleteView):
     template_name = "manager/estudante_confirm_delete.html"
     success_url = '/'
 
-    # Override the delete function to delete report Y from client X
-    # Finally redirect back to the client X page with the list of reports
     def delete(self, request, *args, **kwargs):
         estudanteprofile_id = self.kwargs['pk']
 
@@ -227,13 +224,10 @@ class EstudanteDeleteView(DeleteView):
 
         for x in range(len(lista_estudanteprofile)-1, -1, -1):
             if(lista_estudanteprofile[x].id == estudanteprofile_id):
-                #user_id = lista_estudanteprofile[x].user.id
-                pass
+                user_id = lista_estudanteprofile[x].user.id
 
-        #user = User.objects.filter(id=user_id)
-        #user.delete()
-        #profile = EstudanteProfile.objects.filter(matricula="FC12345")
-        #profile.delete()
+        user = User.objects.filter(id=user_id)
+        user.delete()
 
         return HttpResponseRedirect(reverse('gerenciarEstudante'))
 
@@ -241,8 +235,6 @@ class EstudanteDeleteView(DeleteView):
 class EstudanteUpdateView(UpdateView):
     template_name = "manager/estudante_form.html"
     success_url = '/'
-    user_form = UserForm
-    profile_form = EstudanteProfileForm
 
     def get(self, request, *args, **kwargs):
         estudanteprofile_id = self.kwargs['pk']
@@ -285,3 +277,156 @@ class EstudanteUpdateView(UpdateView):
 
         return HttpResponseRedirect(reverse('estudante-detail', kwargs={'pk': estudanteprofile_id}))
             
+
+#GERENCIAMENTO DE PROFESSORES
+@login_required
+@permission_required("manager.view_professor_profile", raise_exception=True)
+def gerenciarProfessor(request):
+    if request.method=='POST':
+        form = EscolherCursoForm(request.POST, user = request.user)
+        if form.is_valid():
+            dados = form.cleaned_data
+            curso = dados.get('curso')
+            
+            lista_curso = Curso.objects.all()
+            for x in range(len(lista_curso)-1, -1, -1):
+                if(lista_curso[x].nome == str(curso)):
+                    curso_id = lista_curso[x].id
+
+            professores = []
+            lista_professor_curso = Professor_curso.objects.all()
+
+            for x in range(len(lista_professor_curso)-1, -1, -1):
+                if(lista_professor_curso[x].curso.nome == str(curso)):
+                    print("teste")
+                    professores.append(lista_professor_curso[x].professor)
+
+            if(professores == []):
+                professores = None
+                messages.warning(request, f"Não há professores")
+
+            context = {
+                'professores': professores,
+                'curso': curso,
+                'curso_id': curso_id,
+            }
+    else:
+        return redirect('filtrarProfessor')
+    
+    return render(request, 'manager/gerenciar-professor.html', context)
+
+
+@login_required
+@permission_required("users.view_professor_profile", raise_exception=True)
+def filtrarProfessor(request):
+    form = EscolherCursoForm(user=request.user)
+    return render(request, 'manager/filtrar-professor.html', {'form': form})
+
+class ProfessorDetailView(LoginRequiredMixin, DetailView):
+    model = ProfessorProfile
+    template_name = "manager/professor_detail.html"
+
+class ProfessorDeleteView(DeleteView):
+    model = ProfessorProfile
+    template_name = "manager/professor_confirm_delete.html"
+    success_url = '/'
+
+    def delete(self, request, *args, **kwargs):
+        professorprofile_id = self.kwargs['pk']
+
+        lista_professorprofile = ProfessorProfile.objects.all()
+
+        for x in range(len(lista_professorprofile)-1, -1, -1):
+            if(lista_professorprofile[x].id == professorprofile_id):
+                user_id = lista_professorprofile[x].user.id
+
+        user = User.objects.filter(id=user_id)
+        user.delete()
+
+        return HttpResponseRedirect(reverse('gerenciarProfessor'))
+
+
+class ProfessorUpdateView(UpdateView):
+    template_name = "manager/professor_form_update.html"
+    success_url = '/'
+
+    def get(self, request, *args, **kwargs):
+        professorprofile_id = self.kwargs['pk']
+
+        lista_professorprofile = ProfessorProfile.objects.all()
+
+        for x in range(len(lista_professorprofile)-1, -1, -1):
+            if(lista_professorprofile[x].id == professorprofile_id):
+                user_id = lista_professorprofile[x].user.id
+
+        user = User.objects.get(id=user_id)
+        professorprofile = ProfessorProfile.objects.get(id=professorprofile_id)
+
+        return render(request, self.template_name, {
+                                                    'user_form': UserForm(instance=user, prefix='UF'),
+                                                    'profile_form': ProfessorProfileForm(instance=professorprofile, prefix='PF'),
+                                                    }
+                                                )
+
+        
+    def post(self, request, *args, **kwargs):
+        professorprofile_id = self.kwargs['pk']
+
+        lista_professorprofile = ProfessorProfile.objects.all()
+
+        for x in range(len(lista_professorprofile)-1, -1, -1):
+            if(lista_professorprofile[x].id == professorprofile_id):
+                user_id = lista_professorprofile[x].user.id
+
+        user = User.objects.get(id=user_id)
+        professorprofile = ProfessorProfile.objects.get(id=professorprofile_id)
+
+        user_form = UserForm(request.POST, instance=user, prefix='UF')
+        profile_form = ProfessorProfileForm(request.POST, instance=professorprofile, prefix='PF')
+
+        # Check form validation
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+
+        return HttpResponseRedirect(reverse('professor-detail', kwargs={'pk': professorprofile_id}))
+
+class ProfessorCreateView(CreateView):
+    template_name = "manager/professor_form_create.html"
+    success_url = '/'
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name, {
+                                                    'user_form': UserForm(prefix='UF'),
+                                                    'profile_form': ProfessorProfileForm(prefix='PF'),
+                                                    }
+                                                )
+
+        
+    def post(self, request, *args, **kwargs):
+        curso_id = self.kwargs['pk']
+
+        curso = Curso.objects.get(id=curso_id)
+
+        user_form = UserForm(request.POST, prefix='UF')
+        profile_form = ProfessorProfileForm(request.POST, prefix='PF')
+
+        # Check form validation
+        if user_form.is_valid() and profile_form.is_valid():
+            user = user_form.save(commit=False)
+            user.tipo = "Professor"
+            user.save()
+
+            user.professor_profile.campoextra = profile_form.cleaned_data.get('campoextra')
+            user.professor_profile.save()
+            permission = Permission.objects.get(codename='view_presenca')
+            permission2 = Permission.objects.get(codename='view_aula')
+            user.user_permissions.add(permission, permission2)
+
+            professor = user.professor_profile
+            curso = Curso.objects.get(id=curso_id)
+
+            professor_curso = Professor_curso(professor=professor, curso=curso)
+            professor_curso.save()
+
+        return HttpResponseRedirect(reverse('gerenciarProfessor'))

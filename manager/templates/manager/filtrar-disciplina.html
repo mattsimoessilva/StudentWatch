@@ -5,7 +5,7 @@
         <form method="POST" action="{% url 'gerenciarDisciplina' %}">
             {% csrf_token %}
             <fieldset class="form-group">
-                <legend class="border-bottom mb-4">Escolha um curso</legend>
+                <legend class="border-bottom mb-4">Escolha o curso da Disciplina</legend>
                     {{form|crispy}}
             </fieldset>
             <div class="form-group text-center">
