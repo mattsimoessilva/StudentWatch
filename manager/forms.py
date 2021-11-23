@@ -23,20 +23,24 @@ class FiltrarAulaForm(forms.Form):
         self.fields['curso'] = forms.ModelChoiceField(label="Curso", queryset=cursos)
 
 
+class FiltrarEstudanteForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super(FiltrarEstudanteForm, self).__init__(*args, **kwargs) 
+
+        cursos = Curso.objects.all()
+
+        self.fields['curso'] = forms.ModelChoiceField(label="Curso", queryset=cursos)
+
 class CursoForm(ModelForm):
-    required_css_class = 'required'
     class Meta:
         model = Curso
         fields = '__all__'   
         widgets = {
             'nome': TextInput(attrs={
-                'class': "form-control",
-                'style': 'max-width: 500px;',
                 'placeholder': 'Digite o nome do curso'
                 }),
             'descricao': Textarea(attrs={
-                'class': "form-control", 
-                'style': 'max-width: 500px;',
                 'placeholder': 'Digite uma breve descrição do curso'
                 })
         }

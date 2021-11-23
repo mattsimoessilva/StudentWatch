@@ -1,11 +1,12 @@
 {% extends "page/base.html" %}
+{% load crispy_forms_tags %}
 {% block content %}
     <div class="content-section">
         <form method="POST">
             {% csrf_token %}
             <fieldset class="form-group">
                 <legend class="border-bottom mb-4">Cadastre um Curso</legend>
-                {{ form.as_p }}
+                {{ form|crispy }}
             </fieldset>
             <div class="form-group text-center">
                 <button class="btn btn-outline-info" type="submit">Cadastrar</button>

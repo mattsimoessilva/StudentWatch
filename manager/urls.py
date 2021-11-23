@@ -7,16 +7,23 @@ from .views import (
     DisciplinaCreateView,
     DisciplinaUpdateView,
     DisciplinaDeleteView,
+
     #GERENCIAMENTO DE AULAS
     AulaDetailView,
     AulaCreateView,
     AulaUpdateView,
     AulaDeleteView,
+
     #GERENCIAMENTO DE CURSOS
     CursoDetailView,
     CursoCreateView,
     CursoUpdateView,
-    CursoDeleteView
+    CursoDeleteView,
+
+    #GERENCIAMENTO DE ESTUDANTES
+    EstudanteDetailView,
+    EstudanteDeleteView,
+    EstudanteUpdateView
 )
 
 urlpatterns = [
@@ -37,9 +44,17 @@ urlpatterns = [
     path('aula/<int:pk>/update/', AulaUpdateView.as_view(), name='aula-update'),
 
     #GERENCIAMENTO DE CURSOS
+    path('cadastrarCurso/', views.cadastrarCurso, name='cadastrarCurso'),
     path('gerenciarCurso/', views.gerenciarCurso, name='gerenciarCurso'),
     path('curso/<int:pk>/', CursoDetailView.as_view(), name='curso-detail'),
     path('curso/<int:pk>/delete/', CursoDeleteView.as_view(), name='curso-delete'),
     path('curso/new/', CursoCreateView.as_view(), name='curso-create'),
     path('curso/<int:pk>/update/', CursoUpdateView.as_view(), name='curso-update'),
+
+    #GERENCIAMENTO DE ESTUDANTES
+    path('filtrarEstudante/', views.filtrarEstudante, name='filtrarEstudante'),
+    path('gerenciarEstudante/', views.gerenciarEstudante, name='gerenciarEstudante'),
+    path('estudante/<int:pk>/', EstudanteDetailView.as_view(), name='estudante-detail'),
+    path('estudante/<int:pk>/delete/', EstudanteDeleteView.as_view(), name='estudante-delete'),
+    path('estudante/<int:pk>/update/', EstudanteUpdateView.as_view(), name='estudante-update'),
 ]

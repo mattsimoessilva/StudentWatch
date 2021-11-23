@@ -1,6 +1,5 @@
 {% extends "page/base.html" %}
 {% block content %}
-{% if disciplinas != None %}
     <div class="content-section">
         <fieldset class="form-group">
             <a class="btn btn-info btn-sm mb-4" href="{% url 'disciplina-create' %}"><span class="material-icons">add</span></a>
@@ -16,5 +15,4 @@
             </table>
         </fieldset>
     </div>
-{% endif %}
 {% endblock content %}

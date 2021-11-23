@@ -45,7 +45,7 @@ class Aula(models.Model):
         return self.disciplina.nome
 
 class Presenca(models.Model):
-    estudante = models.ForeignKey(EstudanteProfile, on_delete=models.DO_NOTHING, null=True)
+    estudante = models.ForeignKey(EstudanteProfile, on_delete=models.CASCADE, null=True)
     data = models.DateField()
     aula = models.ForeignKey(Aula, on_delete=models.DO_NOTHING, null=True)
 

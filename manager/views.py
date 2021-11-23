@@ -1,4 +1,6 @@
 from django.shortcuts import render, redirect
+from django.urls import reverse
+from django.http import HttpResponseRedirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import(
     DetailView,
@@ -8,9 +10,12 @@ from django.views.generic import(
 )
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
-from .forms import FiltrarDisciplinaForm, CursoForm, FiltrarAulaForm
-from .models import Disciplina, Aula, Curso
 
+from users.models import EstudanteProfile
+from .forms import FiltrarDisciplinaForm, CursoForm, FiltrarAulaForm, FiltrarEstudanteForm
+from .models import Disciplina, Aula, Curso
+from users.models import User, EstudanteProfile
+from users.forms import UserForm, EstudanteProfileForm
 
 #GERENCIAMENTO DE DISCIPLINAS
 @login_required
@@ -135,7 +140,7 @@ def cadastrarCurso(request):
 
 #GERENCIAMENTO DE CURSOS
 @login_required
-@permission_required("manager.view_aula", raise_exception=True)
+@permission_required("manager.view_curso", raise_exception=True)
 def gerenciarCurso(request):
     cursos = Curso.objects.all()
 
@@ -163,3 +168,120 @@ class CursoUpdateView(LoginRequiredMixin, UpdateView):
 class CursoDeleteView(LoginRequiredMixin, DeleteView):
     model = Curso
     success_url = '/'
+
+#GERENCIAMENTO DE ESTUDANTES
+@login_required
+@permission_required("manager.view_estudante_profile", raise_exception=True)
+def gerenciarEstudante(request):
+    if request.method=='POST':
+        form = FiltrarEstudanteForm(request.POST, user = request.user)
+        if form.is_valid():
+            dados = form.cleaned_data
+            curso = dados.get('curso')
+
+            users = []
+            estudantes = []
+            lista_users = User.objects.all()
+            lista_estudanteprofile = EstudanteProfile.objects.all()
+
+            for x in range(len(lista_estudanteprofile)-1, -1, -1):
+                if(lista_estudanteprofile[x].curso.nome == str(curso)):
+                    print("novo macaco")
+                    estudantes.append(lista_estudanteprofile[x])
+
+            if(estudantes == []):
+                estudantes = None
+                messages.warning(request, f"Não há estudantes")
+
+            context = {
+                'estudantes': estudantes,
+                'curso': curso
+            }
+    else:
+        return redirect('filtrarEstudante')
+    
+    return render(request, 'manager/gerenciar-estudante.html', context)
+
+
+@login_required
+@permission_required("users.view_estudante_profile", raise_exception=True)
+def filtrarEstudante(request):
+    form = FiltrarEstudanteForm(user=request.user)
+    return render(request, 'manager/filtrar-estudante.html', {'form': form})
+
+class EstudanteDetailView(LoginRequiredMixin, DetailView):
+    model = EstudanteProfile
+    template_name = "manager/estudante_detail.html"
+
+class EstudanteDeleteView(DeleteView):
+    model = EstudanteProfile
+    template_name = "manager/estudante_confirm_delete.html"
+    success_url = '/'
+
+    # Override the delete function to delete report Y from client X
+    # Finally redirect back to the client X page with the list of reports
+    def delete(self, request, *args, **kwargs):
+        estudanteprofile_id = self.kwargs['pk']
+
+        lista_estudanteprofile = EstudanteProfile.objects.all()
+
+        for x in range(len(lista_estudanteprofile)-1, -1, -1):
+            if(lista_estudanteprofile[x].id == estudanteprofile_id):
+                #user_id = lista_estudanteprofile[x].user.id
+                pass
+
+        #user = User.objects.filter(id=user_id)
+        #user.delete()
+        #profile = EstudanteProfile.objects.filter(matricula="FC12345")
+        #profile.delete()
+
+        return HttpResponseRedirect(reverse('gerenciarEstudante'))
+
+
+class EstudanteUpdateView(UpdateView):
+    template_name = "manager/estudante_form.html"
+    success_url = '/'
+    user_form = UserForm
+    profile_form = EstudanteProfileForm
+
+    def get(self, request, *args, **kwargs):
+        estudanteprofile_id = self.kwargs['pk']
+
+        lista_estudanteprofile = EstudanteProfile.objects.all()
+
+        for x in range(len(lista_estudanteprofile)-1, -1, -1):
+            if(lista_estudanteprofile[x].id == estudanteprofile_id):
+                user_id = lista_estudanteprofile[x].user.id
+
+        user = User.objects.get(id=user_id)
+        estudanteprofile = EstudanteProfile.objects.get(id=estudanteprofile_id)
+
+        return render(request, self.template_name, {
+                                                    'user_form': UserForm(instance=user, prefix='UF'),
+                                                    'profile_form': EstudanteProfileForm(instance=estudanteprofile, prefix='PF'),
+                                                    }
+                                                )
+
+        
+    def post(self, request, *args, **kwargs):
+        estudanteprofile_id = self.kwargs['pk']
+
+        lista_estudanteprofile = EstudanteProfile.objects.all()
+
+        for x in range(len(lista_estudanteprofile)-1, -1, -1):
+            if(lista_estudanteprofile[x].id == estudanteprofile_id):
+                user_id = lista_estudanteprofile[x].user.id
+
+        user = User.objects.get(id=user_id)
+        estudanteprofile = EstudanteProfile.objects.get(id=estudanteprofile_id)
+
+        user_form = UserForm(request.POST, instance=user, prefix='UF')
+        profile_form = EstudanteProfileForm(request.POST, instance=estudanteprofile, prefix='PF')
+
+        # Check form validation
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+
+        return HttpResponseRedirect(reverse('estudante-detail', kwargs={'pk': estudanteprofile_id}))
+            
