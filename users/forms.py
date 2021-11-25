@@ -74,6 +74,21 @@ class ProfessorProfileForm(forms.ModelForm):
             'campoextra': 'Campo Extra'
         }
 
+class CoordenadorProfileForm(forms.ModelForm):
+    class Meta:
+        model = CoordenadorProfile
+        fields = ('campoextra',)
+        widgets = {
+            'campoextra': TextInput(attrs={
+                'class': "form-control", 
+                'style': 'max-width: 500px;',
+                'placeholder': 'Digite o campo extra do coordenador'
+            })
+        }
+        labels = {
+            'campoextra': 'Campo Extra'
+        }
+
 
 class FiltrarPresencaForm2(forms.Form):
     def __init__(self, *args, **kwargs):

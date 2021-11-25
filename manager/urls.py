@@ -29,7 +29,13 @@ from .views import (
     ProfessorDetailView,
     ProfessorDeleteView,
     ProfessorCreateView,
-    ProfessorUpdateView
+    ProfessorUpdateView,
+
+    #GERENCIAMENTO DE COORDENADORES
+    CoordenadorDetailView,
+    CoordenadorDeleteView,
+    CoordenadorCreateView,
+    CoordenadorUpdateView
 )
 
 urlpatterns = [
@@ -50,7 +56,6 @@ urlpatterns = [
     path('aula/<int:pk>/update/', AulaUpdateView.as_view(), name='aula-update'),
 
     #GERENCIAMENTO DE CURSOS
-    path('cadastrarCurso/', views.cadastrarCurso, name='cadastrarCurso'),
     path('gerenciarCurso/', views.gerenciarCurso, name='gerenciarCurso'),
     path('curso/<int:pk>/', CursoDetailView.as_view(), name='curso-detail'),
     path('curso/<int:pk>/delete/', CursoDeleteView.as_view(), name='curso-delete'),
@@ -73,5 +78,10 @@ urlpatterns = [
     path('professor/<int:pk>/update/', ProfessorUpdateView.as_view(), name='professor-update'),
 
     #GERENCIAMENTO DE COORDENADORES
+    path('filtrarCoordenador/', views.filtrarCoordenador, name='filtrarCoordenador'),
     path('gerenciarCoordenador/', views.gerenciarCoordenador, name='gerenciarCoordenador'),
+    path('coordenador/<int:pk>/', CoordenadorDetailView.as_view(), name='coordenador-detail'),
+    path('coordenador/<int:pk>/delete/', CoordenadorDeleteView.as_view(), name='coordenador-delete'),
+    path('coordenador/new/', CoordenadorCreateView.as_view(), name='coordenador-create'),
+    path('coordenador/<int:pk>/update/', CoordenadorUpdateView.as_view(), name='coordenador-update'),
 ]

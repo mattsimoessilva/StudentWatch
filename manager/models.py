@@ -11,6 +11,9 @@ class Curso(models.Model):
     def __str__(self):
         return self.nome
 
+    def get_absolute_url(self):
+        return reverse('curso-detail', kwargs={'pk': self.pk})
+
 class Turno(models.Model):
     nome = models.CharField(max_length=50)
     inicio = models.TimeField(auto_now=False, auto_now_add=False)
@@ -22,7 +25,7 @@ class Turno(models.Model):
 class Disciplina(models.Model):
     nome = models.CharField(max_length=100)
     professor = models.ForeignKey(ProfessorProfile, on_delete=models.DO_NOTHING, null=True)
-    curso = models.ForeignKey(Curso, on_delete=models.DO_NOTHING, null=True)
+    curso = models.ForeignKey(Curso, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return self.nome
@@ -43,6 +46,9 @@ class Aula(models.Model):
 
     def __str__(self):
         return self.disciplina.nome
+
+    def get_absolute_url(self):
+        return reverse('aula-detail', kwargs={'pk': self.pk})
 
 class Presenca(models.Model):
     estudante = models.ForeignKey(EstudanteProfile, on_delete=models.CASCADE, null=True)

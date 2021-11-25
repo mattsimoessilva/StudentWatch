@@ -43,6 +43,8 @@ def create_user_profile(sender, instance, created, **kwargs):
 		EstudanteProfile.objects.get_or_create(user = instance)
 	elif instance.tipo == "Professor":
 		ProfessorProfile.objects.get_or_create(user = instance)
+	elif instance.tipo == "Coordenador":
+		CoordenadorProfile.objects.get_or_create(user = instance)   
 
 
 
@@ -53,6 +55,8 @@ def save_user_profile(sender, instance, **kwargs):
 		instance.estudante_profile.save()
 	elif instance.tipo == "Professor":
 		instance.professor_profile.save()
+	elif instance.tipo == "Coordenador":
+		instance.coordenador_profile.save()
 
 
 

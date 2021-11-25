@@ -15,8 +15,8 @@ from django.contrib.auth.decorators import login_required, permission_required
 from users.models import CoordenadorProfile, EstudanteProfile
 from .forms import CursoForm, EscolherCursoForm, ProfessorCursoForm
 from .models import Disciplina, Aula, Curso, Professor_curso
-from users.models import User, EstudanteProfile, ProfessorProfile
-from users.forms import UserForm, EstudanteProfileForm, ProfessorProfileForm
+from users.models import User, EstudanteProfile, ProfessorProfile, CoordenadorProfile
+from users.forms import UserForm, EstudanteProfileForm, ProfessorProfileForm, CoordenadorProfileForm
 
 #GERENCIAMENTO DE DISCIPLINAS
 @login_required
@@ -60,10 +60,12 @@ class DisciplinaDetailView(LoginRequiredMixin, DetailView):
 class DisciplinaCreateView(LoginRequiredMixin, CreateView):
     model = Disciplina
     fields = ['nome', 'professor', 'curso']
+    template_name = "manager/disciplina_form_create.html"
 
 class DisciplinaUpdateView(LoginRequiredMixin, UpdateView):
     model = Disciplina
     fields = ['nome', 'professor', 'curso']
+    template_name = "manager/disciplina_form_update.html"
 
 class DisciplinaDeleteView(LoginRequiredMixin, DeleteView):
     model = Disciplina
@@ -115,29 +117,17 @@ class AulaDetailView(LoginRequiredMixin, DetailView):
 class AulaCreateView(LoginRequiredMixin, CreateView):
     model = Aula
     fields = ['turno', 'disciplina', 'dia_semana']
+    template_name = "manager/aula_form_create.html"
 
 class AulaUpdateView(LoginRequiredMixin, UpdateView):
     model = Aula
     fields = ['turno', 'disciplina', 'dia_semana']
+    template_name = "manager/aula_form_update.html"
 
 class AulaDeleteView(LoginRequiredMixin, DeleteView):
     model = Aula
     success_url = '/'
 
-
-@login_required
-@permission_required("users.add_curso", raise_exception=True)
-def cadastrarCurso(request):
-    if request.method == 'POST':
-        form = CursoForm(request.POST)
-        if form.is_valid():
-            form.save()
-            nome = form.cleaned_data.get('nome')
-            messages.success(request, f"Curso '{nome}' cadastrado")
-            form = CursoForm()
-    else:
-        form = CursoForm()
-    return render(request, 'manager/cadastrar-curso.html', {'form': form})
 
 #GERENCIAMENTO DE CURSOS
 @login_required
@@ -161,10 +151,12 @@ class CursoDetailView(LoginRequiredMixin, DetailView):
 class CursoCreateView(LoginRequiredMixin, CreateView):
     model = Curso
     fields = ['nome', 'descricao', 'coordenador']
+    template_name = "manager/curso_form_create.html"
 
 class CursoUpdateView(LoginRequiredMixin, UpdateView):
     model = Curso
     fields = ['nome', 'descricao', 'coordenador']
+    template_name = "manager/curso_form_update.html"
 
 class CursoDeleteView(LoginRequiredMixin, DeleteView):
     model = Curso
@@ -443,16 +435,133 @@ class ProfessorCreateView(CreateView):
 
 #GERENCIAMENTO DE COORDENADORES
 @login_required
-@permission_required("manager.view_coordenador", raise_exception=True)
+@permission_required("manager.view_coordenador_profile", raise_exception=True)
 def gerenciarCoordenador(request):
-    coordenadores = CoordenadorProfile.objects.all()
+    if request.method=='POST':
+        form = EscolherCursoForm(request.POST, user = request.user)
+        if form.is_valid():
+            dados = form.cleaned_data
+            curso = dados.get('curso')
 
-    if(coordenadores == []):
-        coordenadores = None
-        messages.warning(request, f"Não há coordenadores")
+            coordenadores = []
+            lista_cursos = Curso.objects.all()
 
-    context = {
-        'coordenadores': coordenadores,
-    }
+            for x in range(len(lista_cursos)-1, -1, -1):
+                if(lista_cursos[x].nome == str(curso)):
+                    coordenadores.append(lista_cursos[x].coordenador)
+
+            if(coordenadores == []):
+                coordenadores = None
+                messages.warning(request, f"Não há coordenadores")
+
+            context = {
+                'coordenadores': coordenadores,
+                'curso': curso,
+            }
+    else:
+        return redirect('filtrarCoordenador')
     
     return render(request, 'manager/gerenciar-coordenador.html', context)
+
+
+@login_required
+@permission_required("users.view_coordenador_profile", raise_exception=True)
+def filtrarCoordenador(request):
+    form = EscolherCursoForm(user=request.user)
+    return render(request, 'manager/filtrar-coordenador.html', {'form': form})
+
+class CoordenadorDetailView(LoginRequiredMixin, DetailView):
+    model = CoordenadorProfile
+    template_name = "manager/coordenador_detail.html"
+
+class CoordenadorDeleteView(DeleteView):
+    model = CoordenadorProfile
+    template_name = "manager/coordenador_confirm_delete.html"
+    success_url = '/'
+
+    def delete(self, request, *args, **kwargs):
+        coordenadorprofile_id = self.kwargs['pk']
+
+        lista_coordenadorprofile = CoordenadorProfile.objects.all()
+
+        for x in range(len(lista_coordenadorprofile)-1, -1, -1):
+            if(lista_coordenadorprofile[x].id == coordenadorprofile_id):
+                user_id = lista_coordenadorprofile[x].user.id
+
+        user = User.objects.filter(id=user_id)
+        user.delete()
+
+        return HttpResponseRedirect(reverse('gerenciarCoordenador'))
+
+
+class CoordenadorCreateView(CreateView):
+    template_name = "manager/coordenador_form_create.html"
+    success_url = '/'
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name, {
+                                                    'user_form': UserForm(prefix='UF'),
+                                                    'profile_form': CoordenadorProfileForm(prefix='PF'),
+                                                    }
+                                                )
+
+    def post(self, request, *args, **kwargs):
+        user_form = UserForm(request.POST, prefix='UF')
+        profile_form = CoordenadorProfileForm(request.POST, prefix='PF')
+
+        # Check form validation
+        if user_form.is_valid() and profile_form.is_valid():
+            user = user_form.save(commit=False)
+            user.tipo = "Coordenador"
+            user.save()
+
+            user.coordenador_profile.campoextra = profile_form.cleaned_data.get('campoextra')
+            user.coordenador_profile.save()
+
+        return HttpResponseRedirect(reverse('gerenciarCoordenador'))
+
+
+class CoordenadorUpdateView(UpdateView):
+    template_name = "manager/coordenador_form_update.html"
+    success_url = '/'
+
+    def get(self, request, *args, **kwargs):
+        coordenadorprofile_id = self.kwargs['pk']
+
+        lista_coordenadorprofile = CoordenadorProfile.objects.all()
+
+        for x in range(len(lista_coordenadorprofile)-1, -1, -1):
+            if(lista_coordenadorprofile[x].id == coordenadorprofile_id):
+                user_id = lista_coordenadorprofile[x].user.id
+
+        user = User.objects.get(id=user_id)
+        coordenadorprofile = CoordenadorProfile.objects.get(id=coordenadorprofile_id)
+
+        return render(request, self.template_name, {
+                                                    'user_form': UserForm(instance=user, prefix='UF'),
+                                                    'profile_form': CoordenadorProfileForm(instance=coordenadorprofile, prefix='PF'),
+                                                    }
+                                                )
+
+        
+    def post(self, request, *args, **kwargs):
+        coordenadorprofile_id = self.kwargs['pk']
+
+        lista_coordenadorprofile = CoordenadorProfile.objects.all()
+
+        for x in range(len(lista_coordenadorprofile)-1, -1, -1):
+            if(lista_coordenadorprofile[x].id == coordenadorprofile_id):
+                user_id = lista_coordenadorprofile[x].user.id
+
+        user = User.objects.get(id=user_id)
+        coordenadorprofile = CoordenadorProfile.objects.get(id=coordenadorprofile_id)
+
+        user_form = UserForm(request.POST, instance=user, prefix='UF')
+        profile_form = CoordenadorProfileForm(request.POST, instance=coordenadorprofile, prefix='PF')
+
+        # Check form validation
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+
+        return HttpResponseRedirect(reverse('coordenador-detail', kwargs={'pk': coordenadorprofile_id}))
