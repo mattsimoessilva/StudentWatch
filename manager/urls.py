@@ -71,4 +71,7 @@ urlpatterns = [
     path('professor/<int:pk>/delete/', ProfessorDeleteView.as_view(), name='professor-delete'),
     path('professor/<int:pk>/new/', ProfessorCreateView.as_view(), name='professor-create'),
     path('professor/<int:pk>/update/', ProfessorUpdateView.as_view(), name='professor-update'),
+
+    #GERENCIAMENTO DE COORDENADORES
+    path('gerenciarCoordenador/', views.gerenciarCoordenador, name='gerenciarCoordenador'),
 ]

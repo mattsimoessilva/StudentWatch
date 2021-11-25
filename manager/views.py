@@ -12,8 +12,8 @@ from django.views.generic import(
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 
-from users.models import EstudanteProfile
-from .forms import CursoForm, EscolherCursoForm
+from users.models import CoordenadorProfile, EstudanteProfile
+from .forms import CursoForm, EscolherCursoForm, ProfessorCursoForm
 from .models import Disciplina, Aula, Curso, Professor_curso
 from users.models import User, EstudanteProfile, ProfessorProfile
 from users.forms import UserForm, EstudanteProfileForm, ProfessorProfileForm
@@ -365,6 +365,7 @@ class ProfessorUpdateView(UpdateView):
         return render(request, self.template_name, {
                                                     'user_form': UserForm(instance=user, prefix='UF'),
                                                     'profile_form': ProfessorProfileForm(instance=professorprofile, prefix='PF'),
+                                                    'curso_form': ProfessorCursoForm(prefix="CF"),
                                                     }
                                                 )
 
@@ -383,11 +384,20 @@ class ProfessorUpdateView(UpdateView):
 
         user_form = UserForm(request.POST, instance=user, prefix='UF')
         profile_form = ProfessorProfileForm(request.POST, instance=professorprofile, prefix='PF')
+        curso_form = ProfessorCursoForm(request.POST, prefix='CF')
 
         # Check form validation
-        if user_form.is_valid() and profile_form.is_valid():
+        if user_form.is_valid() and profile_form.is_valid() and curso_form.is_valid():
             user_form.save()
             profile_form.save()
+
+            Professor_curso.objects.filter(professor=professorprofile).delete()
+
+            cursos = curso_form.cleaned_data.get('curso')
+            for x in range(0, len(cursos), 1):
+                curso = Curso.objects.get(id=cursos[x])
+                professor_curso = Professor_curso(professor=professorprofile, curso=curso)
+                professor_curso.save()
 
         return HttpResponseRedirect(reverse('professor-detail', kwargs={'pk': professorprofile_id}))
 
@@ -399,20 +409,18 @@ class ProfessorCreateView(CreateView):
         return render(request, self.template_name, {
                                                     'user_form': UserForm(prefix='UF'),
                                                     'profile_form': ProfessorProfileForm(prefix='PF'),
+                                                    'curso_form': ProfessorCursoForm(prefix="CF"),
                                                     }
                                                 )
 
         
     def post(self, request, *args, **kwargs):
-        curso_id = self.kwargs['pk']
-
-        curso = Curso.objects.get(id=curso_id)
-
         user_form = UserForm(request.POST, prefix='UF')
         profile_form = ProfessorProfileForm(request.POST, prefix='PF')
+        curso_form = ProfessorCursoForm(request.POST, prefix='CF')
 
         # Check form validation
-        if user_form.is_valid() and profile_form.is_valid():
+        if user_form.is_valid() and profile_form.is_valid() and curso_form.is_valid():
             user = user_form.save(commit=False)
             user.tipo = "Professor"
             user.save()
@@ -424,9 +432,27 @@ class ProfessorCreateView(CreateView):
             user.user_permissions.add(permission, permission2)
 
             professor = user.professor_profile
-            curso = Curso.objects.get(id=curso_id)
-
-            professor_curso = Professor_curso(professor=professor, curso=curso)
-            professor_curso.save()
+            cursos = curso_form.cleaned_data.get('curso')
+            for x in range(0, len(cursos), 1):
+                curso = Curso.objects.get(id=cursos[x])
+                professor_curso = Professor_curso(professor=professor, curso=curso)
+                professor_curso.save()
 
         return HttpResponseRedirect(reverse('gerenciarProfessor'))
+
+
+#GERENCIAMENTO DE COORDENADORES
+@login_required
+@permission_required("manager.view_coordenador", raise_exception=True)
+def gerenciarCoordenador(request):
+    coordenadores = CoordenadorProfile.objects.all()
+
+    if(coordenadores == []):
+        coordenadores = None
+        messages.warning(request, f"Não há coordenadores")
+
+    context = {
+        'coordenadores': coordenadores,
+    }
+    
+    return render(request, 'manager/gerenciar-coordenador.html', context)
