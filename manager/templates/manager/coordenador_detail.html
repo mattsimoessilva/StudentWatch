@@ -6,7 +6,7 @@
             <a class="btn btn-danger btn-sm ml-2" href="{% url 'coordenador-delete' object.id %}"><span class="material-icons">clear</span></a>
         </fieldset>
         <fieldset class="form-group">
-            <legend class="border-bottom mb-4"><span class="material-icons">assignment_ind</span> {{ object.user.username }}</legend>
+            <legend class="border-bottom mb-4"><span class="material-icons">assignment_ind</span> {{ object.user.first_name }} {{ object.user.last_name }}</legend>
             <p><span class="material-icons">mail</span> {{ object.user.email }}</p>
     </div>
 {% endblock content %}

@@ -7,33 +7,27 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import get_user_model
 
 class UserForm(UserCreationForm):
+    first_name = forms.CharField(label='Primeiro nome', widget=forms.TextInput(attrs={'placeholder':'Digite o primeiro nome'}))
+    last_name = forms.CharField(label='Último nome', widget=forms.TextInput(attrs={'placeholder':'Digite o último nome'}))
+
     class Meta:
         model = get_user_model()
-        fields = ('username', 'email', 'password1', 'password2')
+        fields = ('first_name', 'last_name', 'email', 'password1', 'password2')
         widgets = {
-            'username': TextInput(attrs={
-                'class': "form-control", 
-                'style': 'max-width: 500px;',
-                'placeholder': 'Digite o nome'
+            'email': EmailInput(attrs={
+                'placeholder': 'Digite o e-mail'
             }),
             'email': EmailInput(attrs={
-                'class': "form-control",
-                'style': 'max-width: 500px;',
                 'placeholder': 'Digite o e-mail'
             }),
             'password1': PasswordInput(attrs={
-                'class': "form-control",
-                'style': 'max-width: 500px;',
                 'placeholder': 'Digite a senha'
             }),
             'password2': PasswordInput(attrs={
-                'class': "form-control",
-                'style': 'max-width: 500px;',
                 'placeholder': 'Digite a senha novamente'
             })
         }
         labels = {
-            'username': 'Nome',
             'email': 'E-mail',
             'password1': 'Senha',
             'password2': 'Confirmação da Senha'

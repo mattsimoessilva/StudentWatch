@@ -10,7 +10,7 @@
                 {% for estudante in estudantes %} 
                 <tr>
                     <td>
-                        <a href="{% url 'estudante-detail' estudante.id %}"><span class="material-icons">person</span> {{ estudante.user.username }}</a>
+                        <a href="{% url 'estudante-detail' estudante.id %}"><span class="material-icons">person</span> {{ estudante.user.first_name }} {{ estudante.user.last_name }}</a>
                     </td>
                 </tr>
                 {% endfor %}

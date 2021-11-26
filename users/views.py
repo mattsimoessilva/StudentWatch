@@ -30,10 +30,9 @@ def estudante_profile_view(request):
             permission = Permission.objects.get(codename='add_presenca')
             user.user_permissions.add(permission)
 
-            nome = user_form.cleaned_data.get('username')
-            messages.success(request, f"Estudante '{nome}' cadastrado")
-            user_form = UserForm(request.POST, prefix='UF')
-            profile_form = EstudanteProfileForm(request.POST, prefix='PF')
+            messages.success(request, f"Estudante cadastrado")
+            user_form = UserForm(prefix='UF')
+            profile_form = EstudanteProfileForm(prefix='PF')
     else:
         user_form = UserForm(prefix='UF')
         profile_form = EstudanteProfileForm(prefix='PF')
@@ -62,10 +61,9 @@ def professor_profile_view(request):
             permission2 = Permission.objects.get(codename='view_aula')
             user.user_permissions.add(permission, permission2)
 
-            nome = user_form.cleaned_data.get('username')
-            messages.success(request, f"Professor '{nome}' cadastrado")
-            user_form = UserForm(request.POST, prefix='UF')
-            profile_form = ProfessorProfileForm(request.POST, prefix='PF')
+            messages.success(request, f"Professor cadastrado")
+            user_form = UserForm(prefix='UF')
+            profile_form = ProfessorProfileForm(prefix='PF')
     else:
         user_form = UserForm(prefix='UF')
         profile_form = ProfessorProfileForm(prefix='PF')

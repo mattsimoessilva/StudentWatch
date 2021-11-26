@@ -8,7 +8,7 @@
             {% endif %}
         </fieldset>
         <fieldset class="form-group">
-            <legend class="border-bottom mb-4"><span class="material-icons">person</span> {{ object.user.username }}</legend>
+            <legend class="border-bottom mb-4"><span class="material-icons">person</span> {{ object.user.first_name }} {{ object.user.last_name }}</legend>
             <p><span class="material-icons">bookmark</span> {{ object.matricula }}</p>
             <p><span class="material-icons">mail</span> {{ object.user.email }}</p>
             <p><span class="material-icons">source</span> {{ object.curso }}</p>

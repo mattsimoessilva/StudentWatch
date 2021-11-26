@@ -7,6 +7,7 @@ from django.urls import reverse
 
 #CUSTOM USER MODEL
 class User(AbstractUser):
+    username = models.EmailField(_('username'), unique=False)
     email = models.EmailField(_('email address'), unique=True)
     tipo = models.CharField(max_length=100)
 
