@@ -88,7 +88,6 @@ def gerenciarAula(request):
 
             for x in range(len(lista_aulas)-1, -1, -1):
                 if(lista_aulas[x].disciplina.curso.nome == str(curso)):
-                    print("macaco")
                     aulas.append(lista_aulas[x])
 
             if(aulas == []):
@@ -177,7 +176,6 @@ def gerenciarEstudante(request):
 
             for x in range(len(lista_estudanteprofile)-1, -1, -1):
                 if(lista_estudanteprofile[x].curso.nome == str(curso)):
-                    print("novo macaco")
                     estudantes.append(lista_estudanteprofile[x])
 
             if(estudantes == []):
@@ -447,8 +445,9 @@ def gerenciarCoordenador(request):
             lista_cursos = Curso.objects.all()
 
             for x in range(len(lista_cursos)-1, -1, -1):
-                if(lista_cursos[x].nome == str(curso)):
+                if(lista_cursos[x].nome == str(curso) and lista_cursos[x].coordenador != None):
                     coordenadores.append(lista_cursos[x].coordenador)
+
 
             if(coordenadores == []):
                 coordenadores = None
