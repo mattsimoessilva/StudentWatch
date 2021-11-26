@@ -35,7 +35,7 @@ class ProfessorProfile(models.Model):
 class EstudanteProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, related_name='estudante_profile')
     matricula = models.CharField(max_length=20, null=True)
-    curso = models.ForeignKey('manager.Curso', on_delete=models.DO_NOTHING, null=True)
+    curso = models.ForeignKey('manager.Curso', on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
         nome = self.user.first_name+" "+self.user.last_name
