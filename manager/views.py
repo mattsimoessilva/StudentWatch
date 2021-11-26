@@ -13,7 +13,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 
 from users.models import CoordenadorProfile, EstudanteProfile
-from .forms import CursoForm, EscolherCursoForm, ProfessorCursoForm
+from .forms import EscolherCursoForm, ProfessorCursoForm
 from .models import Disciplina, Aula, Curso, Professor_curso
 from users.models import User, EstudanteProfile, ProfessorProfile, CoordenadorProfile
 from users.forms import UserForm, EstudanteProfileForm, ProfessorProfileForm, CoordenadorProfileForm
@@ -106,7 +106,7 @@ def gerenciarAula(request):
 
 
 @login_required
-@permission_required("users.view_aula", raise_exception=True)
+@permission_required("manager.view_aula", raise_exception=True)
 def filtrarAula(request):
     form = EscolherCursoForm(user=request.user)
     return render(request, 'manager/filtrar-aula.html', {'form': form})
@@ -164,7 +164,7 @@ class CursoDeleteView(LoginRequiredMixin, DeleteView):
 
 #GERENCIAMENTO DE ESTUDANTES
 @login_required
-@permission_required("manager.view_estudante_profile", raise_exception=True)
+@permission_required("users.view_estudanteprofile", raise_exception=True)
 def gerenciarEstudante(request):
     if request.method=='POST':
         form = EscolherCursoForm(request.POST, user = request.user)
@@ -195,7 +195,7 @@ def gerenciarEstudante(request):
 
 
 @login_required
-@permission_required("users.view_estudante_profile", raise_exception=True)
+@permission_required("users.view_estudanteprofile", raise_exception=True)
 def filtrarEstudante(request):
     form = EscolherCursoForm(user=request.user)
     return render(request, 'manager/filtrar-estudante.html', {'form': form})
@@ -272,7 +272,7 @@ class EstudanteUpdateView(UpdateView):
 
 #GERENCIAMENTO DE PROFESSORES
 @login_required
-@permission_required("manager.view_professor_profile", raise_exception=True)
+@permission_required("users.view_professorprofile", raise_exception=True)
 def gerenciarProfessor(request):
     if request.method=='POST':
         form = EscolherCursoForm(request.POST, user = request.user)
@@ -309,7 +309,7 @@ def gerenciarProfessor(request):
 
 
 @login_required
-@permission_required("users.view_professor_profile", raise_exception=True)
+@permission_required("users.view_professorprofile", raise_exception=True)
 def filtrarProfessor(request):
     form = EscolherCursoForm(user=request.user)
     return render(request, 'manager/filtrar-professor.html', {'form': form})
@@ -517,6 +517,12 @@ class CoordenadorCreateView(CreateView):
 
             user.coordenador_profile.campoextra = profile_form.cleaned_data.get('campoextra')
             user.coordenador_profile.save()
+            permission = Permission.objects.get(codename='view_disciplina')
+            permission2 = Permission.objects.get(codename='view_aula')
+            permission3 = Permission.objects.get(codename='view_estudanteprofile')
+            permission4 = Permission.objects.get(codename='view_professorprofile')
+            permission5 = Permission.objects.get(codename='view_presenca')
+            user.user_permissions.add(permission, permission2, permission3, permission4, permission5)
 
         return HttpResponseRedirect(reverse('gerenciarCoordenador'))
 

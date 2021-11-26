@@ -1,35 +1,23 @@
 from django import forms
 from django.forms.fields import MultipleChoiceField
 from django.forms.widgets import CheckboxSelectMultiple
-from .models import Curso, Professor_curso
+from .models import Curso, Professor_curso, Aula
 from users.models import CoordenadorProfile
 from django.forms import ModelForm, TextInput, Textarea, EmailInput, Select, PasswordInput
 
 
 class EscolherCursoForm(forms.Form):
     def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop('user', None)
+        user = self.user = kwargs.pop('user', None)
         super(EscolherCursoForm, self).__init__(*args, **kwargs) 
 
-        cursos = Curso.objects.all()
+        if user.is_staff:
+            cursos = Curso.objects.all()
+        elif user.tipo == "Coordenador":
+            cursos = Curso.objects.filter(coordenador = CoordenadorProfile.objects.get(user=user))
 
         self.fields['curso'] = forms.ModelChoiceField(label="Curso", queryset=cursos)
 
-class CursoForm(ModelForm):
-    class Meta:
-        model = Curso
-        fields = '__all__'   
-        widgets = {
-            'nome': TextInput(attrs={
-                'placeholder': 'Digite o nome do curso'
-                }),
-            'descricao': Textarea(attrs={
-                'placeholder': 'Digite uma breve descrição do curso'
-                })
-        }
-        labels = {
-            'descricao': 'Descrição'
-        }
 
 class ProfessorCursoForm(forms.Form):
     def __init__(self, *args, **kwargs):

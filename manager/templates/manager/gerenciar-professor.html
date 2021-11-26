@@ -2,7 +2,9 @@
 {% block content %}
     <div class="content-section">
         <fieldset class="form-group">
-            <a class="btn btn-info btn-sm mb-4" href="{% url 'professor-create' curso_id %}"><span class="material-icons">add</span></a>
+            {% if user.is_staff %}
+                <a class="btn btn-info btn-sm mb-4" href="{% url 'professor-create' curso_id %}"><span class="material-icons">add</span></a>
+            {% endif %}
             <legend class="border-bottom mb-4">Professores de {{ curso }}</legend>
             <table class="table table-bordered">
                 {% for professor in professores %} 

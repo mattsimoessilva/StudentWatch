@@ -57,6 +57,12 @@
                     </div>
                   </div>
               {% endif %}
+              {% if user.is_authenticated and user.tipo == "Coordenador" %}
+                  <a class="nav-item nav-link" href="{% url 'filtrarDisciplina' %}"><span class="material-icons">book</span> Disciplinas</a>
+                  <a class="nav-item nav-link" href="{% url 'filtrarAula' %}"><span class="material-icons">assignment</span> Aulas</a>
+                  <a class="nav-item nav-link" href="{% url 'filtrarEstudante' %}"><span class="material-icons">person</span> Estudantes</a>
+                  <a class="nav-item nav-link" href="{% url 'filtrarProfessor' %}"><span class="material-icons">face</span> Professores</a>
+              {% endif %}
               </div>
               <!-- Navbar Right Side -->
               <div class="navbar-nav">
