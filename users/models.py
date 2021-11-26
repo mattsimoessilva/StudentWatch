@@ -11,6 +11,9 @@ class User(AbstractUser):
     email = models.EmailField(_('email address'), unique=True)
     tipo = models.CharField(max_length=100)
 
+    def __str__(self):
+        nome = self.first_name+" "+self.last_name
+        return nome
 
 #USER PROFILES
 class CoordenadorProfile(models.Model):
@@ -18,14 +21,16 @@ class CoordenadorProfile(models.Model):
     campoextra = models.CharField(max_length=100, null=True)
 
     def __str__(self):
-        return self.user.username
+        nome = self.user.first_name+" "+self.user.last_name
+        return nome
 
 class ProfessorProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, related_name='professor_profile')
     campoextra = models.CharField(max_length=100, null=True)
 
     def __str__(self):
-        return self.user.username
+        nome = self.user.first_name+" "+self.user.last_name
+        return nome
 
 class EstudanteProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, related_name='estudante_profile')
@@ -33,7 +38,8 @@ class EstudanteProfile(models.Model):
     curso = models.ForeignKey('manager.Curso', on_delete=models.DO_NOTHING, null=True)
 
     def __str__(self):
-        return self.user.username
+        nome = self.user.first_name+" "+self.user.last_name
+        return nome
         
 
 #SIGNAL STUFF TO ASSOCIATE THE USER MODEL WITH THE USER PROFILES
