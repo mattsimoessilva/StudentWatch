@@ -21,38 +21,43 @@ from users.forms import UserForm, EstudanteProfileForm, ProfessorProfileForm, Co
 #GERENCIAMENTO DE DISCIPLINAS
 @login_required
 @permission_required("manager.view_disciplina", raise_exception=True)
-def gerenciarDisciplina(request):
-    if request.method=='POST':
-        form = EscolherCursoForm(request.POST, user = request.user)
-        if form.is_valid():
-            dados = form.cleaned_data
-            curso = dados.get('curso')
+def gerenciarDisciplina(request, pk):
+    curso_id = pk
+    curso = Curso.objects.get(id=curso_id)
 
-            disciplinas = []
-            lista_disciplinas = Disciplina.objects.all()
+    disciplinas = []
+    lista_disciplinas = Disciplina.objects.all()
 
-            for x in range(len(lista_disciplinas)-1, -1, -1):
-                if(lista_disciplinas[x].curso.nome == str(curso)):
-                    disciplinas.append(lista_disciplinas[x])
+    for x in range(len(lista_disciplinas)-1, -1, -1):
+        if(lista_disciplinas[x].curso.id == curso_id):
+            disciplinas.append(lista_disciplinas[x])
                    
-            if(disciplinas == []):
-                disciplinas = None
-                messages.warning(request, f"Não há disciplinas")
+    if(disciplinas == []):
+        disciplinas = None
+        messages.warning(request, f"Não há disciplinas")
 
-            context = {
-                'disciplinas': disciplinas,
-                'curso': curso
-            }
-    else:
-        return redirect('filtrarDisciplina')
+    context = {
+        'disciplinas': disciplinas,
+        'curso': curso
+    }
     
     return render(request, 'manager/gerenciar-disciplina.html', context)
 
 @login_required
 @permission_required("manager.view_disciplina", raise_exception=True)
 def filtrarDisciplina(request):
-    form = EscolherCursoForm(user=request.user)
-    return render(request, 'manager/filtrar-disciplina.html', {'form': form})
+    cursos = Curso.objects.all()
+
+    if(cursos == []):
+        cursos = None
+        messages.warning(request, f"Não há cursos")
+
+    context = {
+        'cursos': cursos,
+    }
+    
+    return render(request, 'manager/filtrar-disciplina.html', context)
+
 
 class DisciplinaDetailView(LoginRequiredMixin, DetailView):
     model = Disciplina
@@ -76,30 +81,25 @@ class DisciplinaDeleteView(LoginRequiredMixin, DeleteView):
 #GERENCIAMENTO DE AULAS
 @login_required
 @permission_required("manager.view_aula", raise_exception=True)
-def gerenciarAula(request):
-    if request.method=='POST':
-        form = EscolherCursoForm(request.POST, user = request.user)
-        if form.is_valid():
-            dados = form.cleaned_data
-            curso = dados.get('curso')
+def gerenciarAula(request, pk):
+    curso_id = pk
+    curso = Curso.objects.get(id=curso_id)
 
-            aulas = []
-            lista_aulas = Aula.objects.all()
+    aulas = []
+    lista_aulas = Aula.objects.all()
 
-            for x in range(len(lista_aulas)-1, -1, -1):
-                if(lista_aulas[x].disciplina.curso.nome == str(curso)):
-                    aulas.append(lista_aulas[x])
+    for x in range(len(lista_aulas)-1, -1, -1):
+        if(lista_aulas[x].disciplina.curso.id == curso_id):
+            aulas.append(lista_aulas[x])
+                   
+    if(aulas == []):
+        aulas = None
+        messages.warning(request, f"Não há aulas")
 
-            if(aulas == []):
-                aulas = None
-                messages.warning(request, f"Não há aulas")
-
-            context = {
-                'aulas': aulas,
-                'curso': curso
-            }
-    else:
-        return redirect('filtrarAula')
+    context = {
+        'aulas': aulas,
+        'curso': curso
+    }
     
     return render(request, 'manager/gerenciar-aula.html', context)
 
@@ -107,8 +107,17 @@ def gerenciarAula(request):
 @login_required
 @permission_required("manager.view_aula", raise_exception=True)
 def filtrarAula(request):
-    form = EscolherCursoForm(user=request.user)
-    return render(request, 'manager/filtrar-aula.html', {'form': form})
+    cursos = Curso.objects.all()
+
+    if(cursos == []):
+        cursos = None
+        messages.warning(request, f"Não há cursos")
+
+    context = {
+        'cursos': cursos,
+    }
+    
+    return render(request, 'manager/filtrar-aula.html', context)
 
 class AulaDetailView(LoginRequiredMixin, DetailView):
     model = Aula
@@ -164,30 +173,25 @@ class CursoDeleteView(LoginRequiredMixin, DeleteView):
 #GERENCIAMENTO DE ESTUDANTES
 @login_required
 @permission_required("users.view_estudanteprofile", raise_exception=True)
-def gerenciarEstudante(request):
-    if request.method=='POST':
-        form = EscolherCursoForm(request.POST, user = request.user)
-        if form.is_valid():
-            dados = form.cleaned_data
-            curso = dados.get('curso')
-        
-            estudantes = []
-            lista_estudanteprofile = EstudanteProfile.objects.all()
+def gerenciarEstudante(request, pk):
+    curso_id = pk
+    curso = Curso.objects.get(id=curso_id)
 
-            for x in range(len(lista_estudanteprofile)-1, -1, -1):
-                if(lista_estudanteprofile[x].curso.nome == str(curso)):
-                    estudantes.append(lista_estudanteprofile[x])
+    estudantes = []
+    lista_estudanteprofile = EstudanteProfile.objects.all()
 
-            if(estudantes == []):
-                estudantes = None
-                messages.warning(request, f"Não há estudantes")
+    for x in range(len(lista_estudanteprofile)-1, -1, -1):
+        if(lista_estudanteprofile[x].curso.id == curso_id):
+            estudantes.append(lista_estudanteprofile[x])
+                   
+    if(estudantes == []):
+        estudantes = None
+        messages.warning(request, f"Não há estudantes")
 
-            context = {
-                'estudantes': estudantes,
-                'curso': curso
-            }
-    else:
-        return redirect('filtrarEstudante')
+    context = {
+        'estudantes': estudantes,
+        'curso': curso
+    }
     
     return render(request, 'manager/gerenciar-estudante.html', context)
 
@@ -195,8 +199,18 @@ def gerenciarEstudante(request):
 @login_required
 @permission_required("users.view_estudanteprofile", raise_exception=True)
 def filtrarEstudante(request):
-    form = EscolherCursoForm(user=request.user)
-    return render(request, 'manager/filtrar-estudante.html', {'form': form})
+    cursos = Curso.objects.all()
+
+    if(cursos == []):
+        cursos = None
+        messages.warning(request, f"Não há cursos")
+
+    context = {
+        'cursos': cursos,
+    }
+    
+    return render(request, 'manager/filtrar-estudante.html', context)
+
 
 class EstudanteDetailView(LoginRequiredMixin, DetailView):
     model = EstudanteProfile
@@ -205,7 +219,6 @@ class EstudanteDetailView(LoginRequiredMixin, DetailView):
 class EstudanteDeleteView(DeleteView):
     model = EstudanteProfile
     template_name = "manager/estudante_confirm_delete.html"
-    success_url = '/'
 
     def delete(self, request, *args, **kwargs):
         estudanteprofile_id = self.kwargs['pk']
@@ -215,16 +228,16 @@ class EstudanteDeleteView(DeleteView):
         for x in range(len(lista_estudanteprofile)-1, -1, -1):
             if(lista_estudanteprofile[x].id == estudanteprofile_id):
                 user_id = lista_estudanteprofile[x].user.id
+                curso_id = lista_estudanteprofile[x].curso.id
 
         user = User.objects.filter(id=user_id)
         user.delete()
 
-        return HttpResponseRedirect(reverse('gerenciarEstudante'))
+        return HttpResponseRedirect(reverse('gerenciarEstudante', kwargs={'pk': curso_id}))
 
 
 class EstudanteUpdateView(UpdateView):
     template_name = "manager/estudante_form.html"
-    success_url = '/'
 
     def get(self, request, *args, **kwargs):
         estudanteprofile_id = self.kwargs['pk']
@@ -265,43 +278,31 @@ class EstudanteUpdateView(UpdateView):
             user_form.save()
             profile_form.save()
 
-        return HttpResponseRedirect(reverse('estudante-detail', kwargs={'pk': estudanteprofile_id}))
+        return HttpResponseRedirect(reverse('gerenciarEstudante', kwargs={'pk': estudanteprofile.curso.id}))
             
 
 #GERENCIAMENTO DE PROFESSORES
 @login_required
 @permission_required("users.view_professorprofile", raise_exception=True)
-def gerenciarProfessor(request):
-    if request.method=='POST':
-        form = EscolherCursoForm(request.POST, user = request.user)
-        if form.is_valid():
-            dados = form.cleaned_data
-            curso = dados.get('curso')
-            
-            lista_curso = Curso.objects.all()
-            for x in range(len(lista_curso)-1, -1, -1):
-                if(lista_curso[x].nome == str(curso)):
-                    curso_id = lista_curso[x].id
+def gerenciarProfessor(request, curso_id):
+    curso_id = curso_id
+    curso = Curso.objects.get(id=curso_id)
 
-            professores = []
-            lista_professor_curso = Professor_curso.objects.all()
+    professores = []
+    lista_professor_curso = Professor_curso.objects.all()
 
-            for x in range(len(lista_professor_curso)-1, -1, -1):
-                if(lista_professor_curso[x].curso.nome == str(curso)):
-                    print("teste")
-                    professores.append(lista_professor_curso[x].professor)
+    for x in range(len(lista_professor_curso)-1, -1, -1):
+        if(lista_professor_curso[x].curso.id == curso_id):
+            professores.append(lista_professor_curso[x].professor)
+                   
+    if(professores == []):
+        professores = None
+        messages.warning(request, f"Não há professores")
 
-            if(professores == []):
-                professores = None
-                messages.warning(request, f"Não há professores")
-
-            context = {
-                'professores': professores,
-                'curso': curso,
-                'curso_id': curso_id,
-            }
-    else:
-        return redirect('filtrarProfessor')
+    context = {
+        'professores': professores,
+        'curso': curso
+    }
     
     return render(request, 'manager/gerenciar-professor.html', context)
 
@@ -309,20 +310,54 @@ def gerenciarProfessor(request):
 @login_required
 @permission_required("users.view_professorprofile", raise_exception=True)
 def filtrarProfessor(request):
-    form = EscolherCursoForm(user=request.user)
-    return render(request, 'manager/filtrar-professor.html', {'form': form})
+    cursos = Curso.objects.all()
+
+    if(cursos == []):
+        cursos = None
+        messages.warning(request, f"Não há cursos")
+
+    context = {
+        'cursos': cursos,
+    }
+    
+    return render(request, 'manager/filtrar-professor.html', context)
 
 class ProfessorDetailView(LoginRequiredMixin, DetailView):
-    model = ProfessorProfile
     template_name = "manager/professor_detail.html"
 
+    def get(self, request, *args, **kwargs):
+        curso_id = self.kwargs['curso_id']
+        professorprofile_id = self.kwargs['professor_id']
+
+        professorprofile = ProfessorProfile.objects.get(id=professorprofile_id)
+
+        context = {
+            'object': professorprofile,
+            'curso_id': curso_id,
+        }
+    
+        return render(request, self.template_name, context)
+
+
 class ProfessorDeleteView(DeleteView):
-    model = ProfessorProfile
     template_name = "manager/professor_confirm_delete.html"
-    success_url = '/'
+
+    def get(self, request, *args, **kwargs):
+        curso_id = self.kwargs['curso_id']
+        professorprofile_id = self.kwargs['professor_id']
+
+        professorprofile = ProfessorProfile.objects.get(id=professorprofile_id)
+
+        context = {
+            'object': professorprofile,
+            'curso_id': curso_id,
+        }
+    
+        return render(request, self.template_name, context)
 
     def delete(self, request, *args, **kwargs):
-        professorprofile_id = self.kwargs['pk']
+        curso_id = self.kwargs['curso_id']
+        professorprofile_id = self.kwargs['professor_id']
 
         lista_professorprofile = ProfessorProfile.objects.all()
 
@@ -333,15 +368,14 @@ class ProfessorDeleteView(DeleteView):
         user = User.objects.filter(id=user_id)
         user.delete()
 
-        return HttpResponseRedirect(reverse('gerenciarProfessor'))
+        return HttpResponseRedirect(reverse('gerenciarProfessor', kwargs={'curso_id': curso_id}))
 
 
 class ProfessorUpdateView(UpdateView):
     template_name = "manager/professor_form_update.html"
-    success_url = '/'
 
     def get(self, request, *args, **kwargs):
-        professorprofile_id = self.kwargs['pk']
+        professorprofile_id = self.kwargs['professor_id']
 
         lista_professorprofile = ProfessorProfile.objects.all()
 
@@ -350,18 +384,17 @@ class ProfessorUpdateView(UpdateView):
                 user_id = lista_professorprofile[x].user.id
 
         user = User.objects.get(id=user_id)
-        professorprofile = ProfessorProfile.objects.get(id=professorprofile_id)
 
         return render(request, self.template_name, {
                                                     'user_form': UserForm(instance=user, prefix='UF'),
-                                                    'profile_form': ProfessorProfileForm(instance=professorprofile, prefix='PF'),
                                                     'curso_form': ProfessorCursoForm(prefix="CF"),
                                                     }
                                                 )
 
         
     def post(self, request, *args, **kwargs):
-        professorprofile_id = self.kwargs['pk']
+        curso_id = self.kwargs['curso_id']
+        professorprofile_id = self.kwargs['professor_id']
 
         lista_professorprofile = ProfessorProfile.objects.all()
 
@@ -373,13 +406,11 @@ class ProfessorUpdateView(UpdateView):
         professorprofile = ProfessorProfile.objects.get(id=professorprofile_id)
 
         user_form = UserForm(request.POST, instance=user, prefix='UF')
-        profile_form = ProfessorProfileForm(request.POST, instance=professorprofile, prefix='PF')
         curso_form = ProfessorCursoForm(request.POST, prefix='CF')
 
         # Check form validation
-        if user_form.is_valid() and profile_form.is_valid() and curso_form.is_valid():
+        if user_form.is_valid() and curso_form.is_valid():
             user_form.save()
-            profile_form.save()
 
             Professor_curso.objects.filter(professor=professorprofile).delete()
 
@@ -389,33 +420,31 @@ class ProfessorUpdateView(UpdateView):
                 professor_curso = Professor_curso(professor=professorprofile, curso=curso)
                 professor_curso.save()
 
-        return HttpResponseRedirect(reverse('professor-detail', kwargs={'pk': professorprofile_id}))
+        return HttpResponseRedirect(reverse('gerenciarProfessor', kwargs={'curso_id': curso_id}))
 
 class ProfessorCreateView(CreateView):
     template_name = "manager/professor_form_create.html"
-    success_url = '/'
 
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name, {
                                                     'user_form': UserForm(prefix='UF'),
-                                                    'profile_form': ProfessorProfileForm(prefix='PF'),
                                                     'curso_form': ProfessorCursoForm(prefix="CF"),
                                                     }
                                                 )
 
         
     def post(self, request, *args, **kwargs):
+        curso_id = self.kwargs['curso_id']
+
         user_form = UserForm(request.POST, prefix='UF')
-        profile_form = ProfessorProfileForm(request.POST, prefix='PF')
         curso_form = ProfessorCursoForm(request.POST, prefix='CF')
 
         # Check form validation
-        if user_form.is_valid() and profile_form.is_valid() and curso_form.is_valid():
+        if user_form.is_valid() and curso_form.is_valid():
             user = user_form.save(commit=False)
             user.tipo = "Professor"
             user.save()
 
-            user.professor_profile.campoextra = profile_form.cleaned_data.get('campoextra')
             user.professor_profile.save()
             permission = Permission.objects.get(codename='view_presenca')
             permission2 = Permission.objects.get(codename='view_aula')
@@ -428,37 +457,33 @@ class ProfessorCreateView(CreateView):
                 professor_curso = Professor_curso(professor=professor, curso=curso)
                 professor_curso.save()
 
-        return HttpResponseRedirect(reverse('gerenciarProfessor'))
+        return HttpResponseRedirect(reverse('gerenciarProfessor', kwargs={'curso_id': curso_id}))
 
 
 #GERENCIAMENTO DE COORDENADORES
 @login_required
 @permission_required("manager.view_coordenador_profile", raise_exception=True)
-def gerenciarCoordenador(request):
-    if request.method=='POST':
-        form = EscolherCursoForm(request.POST, user = request.user)
-        if form.is_valid():
-            dados = form.cleaned_data
-            curso = dados.get('curso')
+def gerenciarCoordenador(request, curso_id):
+    curso_id = curso_id
+    curso = Curso.objects.get(id=curso_id)
 
-            coordenadores = []
-            lista_cursos = Curso.objects.all()
+    coordenadores = []
+    lista_cursos = Curso.objects.all()
 
-            for x in range(len(lista_cursos)-1, -1, -1):
-                if(lista_cursos[x].nome == str(curso) and lista_cursos[x].coordenador != None):
-                    coordenadores.append(lista_cursos[x].coordenador)
+    for x in range(len(lista_cursos)-1, -1, -1):
+        if(lista_cursos[x].id == curso_id and lista_cursos[x].coordenador != None):
+            coordenadores.append(lista_cursos[x].coordenador)
+                   
+    if(coordenadores == []):
+        coordenadores = None
+        messages.warning(request, f"Não há coordenadores")
 
+    print(coordenadores)
 
-            if(coordenadores == []):
-                coordenadores = None
-                messages.warning(request, f"Não há coordenadores")
-
-            context = {
-                'coordenadores': coordenadores,
-                'curso': curso,
-            }
-    else:
-        return redirect('filtrarCoordenador')
+    context = {
+        'coordenadores': coordenadores,
+        'curso': curso
+    }
     
     return render(request, 'manager/gerenciar-coordenador.html', context)
 
@@ -466,20 +491,53 @@ def gerenciarCoordenador(request):
 @login_required
 @permission_required("users.view_coordenador_profile", raise_exception=True)
 def filtrarCoordenador(request):
-    form = EscolherCursoForm(user=request.user)
-    return render(request, 'manager/filtrar-coordenador.html', {'form': form})
+    cursos = Curso.objects.all()
+
+    if(cursos == []):
+        cursos = None
+        messages.warning(request, f"Não há cursos")
+
+    context = {
+        'cursos': cursos,
+    }
+    
+    return render(request, 'manager/filtrar-coordenador.html', context)
 
 class CoordenadorDetailView(LoginRequiredMixin, DetailView):
-    model = CoordenadorProfile
     template_name = "manager/coordenador_detail.html"
 
+    def get(self, request, *args, **kwargs):
+        curso_id = self.kwargs['curso_id']
+        coordenadorprofile_id = self.kwargs['coordenador_id']
+
+        coordenadorprofile = CoordenadorProfile.objects.get(id=coordenadorprofile_id)
+
+        context = {
+            'object': coordenadorprofile,
+            'curso_id': curso_id,
+        }
+    
+        return render(request, self.template_name, context)
+
 class CoordenadorDeleteView(DeleteView):
-    model = CoordenadorProfile
     template_name = "manager/coordenador_confirm_delete.html"
-    success_url = '/'
+
+    def get(self, request, *args, **kwargs):
+        curso_id = self.kwargs['curso_id']
+        coordenadorprofile_id = self.kwargs['coordenador_id']
+
+        coordenadorprofile = CoordenadorProfile.objects.get(id=coordenadorprofile_id)
+
+        context = {
+            'object': coordenadorprofile,
+            'curso_id': curso_id,
+        }
+    
+        return render(request, self.template_name, context)
 
     def delete(self, request, *args, **kwargs):
-        coordenadorprofile_id = self.kwargs['pk']
+        curso_id = self.kwargs['curso_id']
+        coordenadorprofile_id = self.kwargs['coordenador_id']
 
         lista_coordenadorprofile = CoordenadorProfile.objects.all()
 
@@ -490,31 +548,29 @@ class CoordenadorDeleteView(DeleteView):
         user = User.objects.filter(id=user_id)
         user.delete()
 
-        return HttpResponseRedirect(reverse('gerenciarCoordenador'))
+        return HttpResponseRedirect(reverse('gerenciarCoordenador', kwargs={'curso_id': curso_id}))
 
 
 class CoordenadorCreateView(CreateView):
     template_name = "manager/coordenador_form_create.html"
-    success_url = '/'
 
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name, {
                                                     'user_form': UserForm(prefix='UF'),
-                                                    'profile_form': CoordenadorProfileForm(prefix='PF'),
                                                     }
                                                 )
 
     def post(self, request, *args, **kwargs):
+        curso_id = self.kwargs['curso_id']
+
         user_form = UserForm(request.POST, prefix='UF')
-        profile_form = CoordenadorProfileForm(request.POST, prefix='PF')
 
         # Check form validation
-        if user_form.is_valid() and profile_form.is_valid():
+        if user_form.is_valid():
             user = user_form.save(commit=False)
             user.tipo = "Coordenador"
             user.save()
 
-            user.coordenador_profile.campoextra = profile_form.cleaned_data.get('campoextra')
             user.coordenador_profile.save()
             permission = Permission.objects.get(codename='view_disciplina')
             permission2 = Permission.objects.get(codename='view_aula')
@@ -523,15 +579,14 @@ class CoordenadorCreateView(CreateView):
             permission5 = Permission.objects.get(codename='view_presenca')
             user.user_permissions.add(permission, permission2, permission3, permission4, permission5)
 
-        return HttpResponseRedirect(reverse('gerenciarCoordenador'))
+        return HttpResponseRedirect(reverse('gerenciarCoordenador', kwargs={'curso_id': curso_id}))
 
 
 class CoordenadorUpdateView(UpdateView):
     template_name = "manager/coordenador_form_update.html"
-    success_url = '/'
 
     def get(self, request, *args, **kwargs):
-        coordenadorprofile_id = self.kwargs['pk']
+        coordenadorprofile_id = self.kwargs['coordenador_id']
 
         lista_coordenadorprofile = CoordenadorProfile.objects.all()
 
@@ -540,17 +595,16 @@ class CoordenadorUpdateView(UpdateView):
                 user_id = lista_coordenadorprofile[x].user.id
 
         user = User.objects.get(id=user_id)
-        coordenadorprofile = CoordenadorProfile.objects.get(id=coordenadorprofile_id)
 
         return render(request, self.template_name, {
                                                     'user_form': UserForm(instance=user, prefix='UF'),
-                                                    'profile_form': CoordenadorProfileForm(instance=coordenadorprofile, prefix='PF'),
                                                     }
                                                 )
 
         
     def post(self, request, *args, **kwargs):
-        coordenadorprofile_id = self.kwargs['pk']
+        curso_id = self.kwargs['curso_id']
+        coordenadorprofile_id = self.kwargs['coordenador_id']
 
         lista_coordenadorprofile = CoordenadorProfile.objects.all()
 
@@ -562,11 +616,9 @@ class CoordenadorUpdateView(UpdateView):
         coordenadorprofile = CoordenadorProfile.objects.get(id=coordenadorprofile_id)
 
         user_form = UserForm(request.POST, instance=user, prefix='UF')
-        profile_form = CoordenadorProfileForm(request.POST, instance=coordenadorprofile, prefix='PF')
 
         # Check form validation
-        if user_form.is_valid() and profile_form.is_valid():
+        if user_form.is_valid():
             user_form.save()
-            profile_form.save()
 
-        return HttpResponseRedirect(reverse('coordenador-detail', kwargs={'pk': coordenadorprofile_id}))
+        return HttpResponseRedirect(reverse('gerenciarCoordenador', kwargs={'curso_id': curso_id}))

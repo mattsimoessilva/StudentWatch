@@ -3,8 +3,8 @@
     <div class="content-section">
         <fieldset class="form-group">
             {% if user.is_staff %}
-                <a class="btn btn-info btn-sm" href="{% url 'professor-update' object.id %}"><span class="material-icons">edit</span></a>
-                <a class="btn btn-danger btn-sm ml-2" href="{% url 'professor-delete' object.id %}"><span class="material-icons">clear</span></a>
+                <a class="btn btn-info btn-sm" href="{% url 'professor-update' curso_id=curso_id professor_id=object.id %}"><span class="material-icons">edit</span></a>
+                <a class="btn btn-danger btn-sm ml-2" href="{% url 'professor-delete' curso_id=curso_id professor_id=object.id %}"><span class="material-icons">clear</span></a>
             {% endif %}
         </fieldset>
         <fieldset class="form-group">

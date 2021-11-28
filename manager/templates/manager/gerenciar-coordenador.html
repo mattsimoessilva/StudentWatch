@@ -2,13 +2,13 @@
 {% block content %}
     <div class="content-section">
         <fieldset class="form-group">
-            <a class="btn btn-info btn-sm mb-4" href="{% url 'coordenador-create' %}"><span class="material-icons">add</span></a>
-            <legend class="border-bottom mb-4">Coordenadores</legend>
+            <a class="btn btn-info btn-sm mb-4" href="{% url 'coordenador-create' curso_id=curso.id %}"><span class="material-icons">add</span></a>
+            <legend class="border-bottom mb-4">Coordenadores de {{ curso }}</legend>
             <table class="table table-bordered">
                 {% for coordenador in coordenadores %} 
                 <tr>
                     <td>
-                        <a href="#"><span class="material-icons">assignment_ind</span> {{ coordenador.user.first_name }} {{ coordenador.user.last_name }}</a>
+                        <a href="{% url 'coordenador-detail' curso_id=curso.id coordenador_id=coordenador.id %}"><span class="material-icons">assignment_ind</span> {{ coordenador.user.first_name }} {{ coordenador.user.last_name }}</a>
                     </td>
                 </tr>
                 {% endfor %}

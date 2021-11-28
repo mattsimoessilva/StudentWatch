@@ -31,7 +31,7 @@ class Disciplina(models.Model):
         return self.nome
 
     def get_absolute_url(self):
-        return reverse('disciplina-detail', kwargs={'pk': self.pk})
+        return reverse('gerenciarDisciplina', kwargs={'pk': self.curso.id})
 
 class Dia_semana(models.Model):
     nome = models.CharField(max_length=50)
@@ -48,7 +48,7 @@ class Aula(models.Model):
         return self.disciplina.nome
 
     def get_absolute_url(self):
-        return reverse('aula-detail', kwargs={'pk': self.pk})
+        return reverse('gerenciarAula', kwargs={'pk': self.disciplina.curso.id})
 
 class Presenca(models.Model):
     estudante = models.ForeignKey(EstudanteProfile, on_delete=models.CASCADE, null=True)

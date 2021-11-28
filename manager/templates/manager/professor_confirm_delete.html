@@ -9,7 +9,7 @@
             </fieldset>
             <div class="form-group text-center">
                 <button class="btn btn-outline-danger" type="submit">Deletar</button>
-                <a class="btn btn-outline-secondary" href="{% url 'professor-detail' object.id %}">Cancelar</a>
+                <a class="btn btn-outline-secondary" href="{% url 'professor-detail' curso_id=curso_id professor_id=object.id %}">Cancelar</a>
             </div>
         </form>
     </div>

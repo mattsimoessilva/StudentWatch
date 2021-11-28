@@ -3,14 +3,14 @@
     <div class="content-section">
         <fieldset class="form-group">
             {% if user.is_staff %}
-                <a class="btn btn-info btn-sm mb-4" href="{% url 'professor-create' curso_id %}"><span class="material-icons">add</span></a>
+                <a class="btn btn-info btn-sm mb-4" href="{% url 'professor-create' curso_id=curso.id %}"><span class="material-icons">add</span></a>
             {% endif %}
-            <legend class="border-bottom mb-4">Professores de {{ curso }}</legend>
+            <legend class="border-bottom mb-4">Professores de {{ curso.nome }}</legend>
             <table class="table table-bordered">
                 {% for professor in professores %} 
                 <tr>
                     <td>
-                        <a href="{% url 'professor-detail' professor.id %}"><span class="material-icons">person</span> {{ professor.user.first_name }} {{ professor.user.last_name }}</a>
+                        <a href="{% url 'professor-detail' curso_id=curso.id professor_id=professor.id %}"><span class="material-icons">person</span> {{ professor.user.first_name }} {{ professor.user.last_name }}</a>
                     </td>
                 </tr>
                 {% endfor %}

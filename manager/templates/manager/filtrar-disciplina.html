@@ -1,16 +1,17 @@
 {% extends "page/base.html" %}
-{% load crispy_forms_tags %}
 {% block content %}
     <div class="content-section">
-        <form method="POST" action="{% url 'gerenciarDisciplina' %}">
-            {% csrf_token %}
-            <fieldset class="form-group">
-                <legend class="border-bottom mb-4">Escolha o curso da Disciplina</legend>
-                    {{form|crispy}}
-            </fieldset>
-            <div class="form-group text-center">
-                <button class="btn btn-outline-info" type="submit">Confirmar</button>
-            </div>
-        </form>
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4">Escolha o curso das Disciplinas</legend>
+            <table class="table table-bordered">
+                {% for curso in cursos %} 
+                <tr>
+                    <td>
+                        <a href="{% url 'gerenciarDisciplina' curso.id %}"><span class="material-icons">assignment</span> {{ curso.nome }}</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </fieldset>
     </div>
 {% endblock content %}

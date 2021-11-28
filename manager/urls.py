@@ -41,7 +41,7 @@ from .views import (
 urlpatterns = [
     #GERECIAMENTO DE DISCIPLINAS
     path('filtrarDisciplina/', views.filtrarDisciplina, name='filtrarDisciplina'),
-    path('gerenciarDisciplina/', views.gerenciarDisciplina, name='gerenciarDisciplina'),
+    path('gerenciarDisciplina/<int:pk>/', views.gerenciarDisciplina, name='gerenciarDisciplina'),
     path('disciplina/<int:pk>/', DisciplinaDetailView.as_view(), name='disciplina-detail'),
     path('disciplina/<int:pk>/delete/', DisciplinaDeleteView.as_view(), name='disciplina-delete'),
     path('disciplina/new/', DisciplinaCreateView.as_view(), name='disciplina-create'),
@@ -49,7 +49,7 @@ urlpatterns = [
 
     #GERENCIAMENTO DE AULAS
     path('filtrarAula/', views.filtrarAula, name='filtrarAula'),
-    path('gerenciarAula/', views.gerenciarAula, name='gerenciarAula'),
+    path('gerenciarAula/<int:pk>/', views.gerenciarAula, name='gerenciarAula'),
     path('aula/<int:pk>/', AulaDetailView.as_view(), name='aula-detail'),
     path('aula/<int:pk>/delete/', AulaDeleteView.as_view(), name='aula-delete'),
     path('aula/new/', AulaCreateView.as_view(), name='aula-create'),
@@ -64,24 +64,24 @@ urlpatterns = [
 
     #GERENCIAMENTO DE ESTUDANTES
     path('filtrarEstudante/', views.filtrarEstudante, name='filtrarEstudante'),
-    path('gerenciarEstudante/', views.gerenciarEstudante, name='gerenciarEstudante'),
+    path('gerenciarEstudante/<int:pk>/', views.gerenciarEstudante, name='gerenciarEstudante'),
     path('estudante/<int:pk>/', EstudanteDetailView.as_view(), name='estudante-detail'),
     path('estudante/<int:pk>/delete/', EstudanteDeleteView.as_view(), name='estudante-delete'),
     path('estudante/<int:pk>/update/', EstudanteUpdateView.as_view(), name='estudante-update'),
 
     #GERENCIAMENTO DE PROFESSORES
     path('filtrarProfessor/', views.filtrarProfessor, name='filtrarProfessor'),
-    path('gerenciarProfessor/', views.gerenciarProfessor, name='gerenciarProfessor'),
-    path('professor/<int:pk>/', ProfessorDetailView.as_view(), name='professor-detail'),
-    path('professor/<int:pk>/delete/', ProfessorDeleteView.as_view(), name='professor-delete'),
-    path('professor/<int:pk>/new/', ProfessorCreateView.as_view(), name='professor-create'),
-    path('professor/<int:pk>/update/', ProfessorUpdateView.as_view(), name='professor-update'),
+    path('gerenciarProfessor/<int:curso_id>/', views.gerenciarProfessor, name='gerenciarProfessor'),
+    path('professor/<int:curso_id>/<int:professor_id>/', ProfessorDetailView.as_view(), name='professor-detail'),
+    path('professor/<int:curso_id>/<int:professor_id>/delete/', ProfessorDeleteView.as_view(), name='professor-delete'),
+    path('professor/<int:curso_id>/new/', ProfessorCreateView.as_view(), name='professor-create'),
+    path('professor/<int:curso_id>/<int:professor_id>/update/', ProfessorUpdateView.as_view(), name='professor-update'),
 
     #GERENCIAMENTO DE COORDENADORES
     path('filtrarCoordenador/', views.filtrarCoordenador, name='filtrarCoordenador'),
-    path('gerenciarCoordenador/', views.gerenciarCoordenador, name='gerenciarCoordenador'),
-    path('coordenador/<int:pk>/', CoordenadorDetailView.as_view(), name='coordenador-detail'),
-    path('coordenador/<int:pk>/delete/', CoordenadorDeleteView.as_view(), name='coordenador-delete'),
-    path('coordenador/new/', CoordenadorCreateView.as_view(), name='coordenador-create'),
-    path('coordenador/<int:pk>/update/', CoordenadorUpdateView.as_view(), name='coordenador-update'),
+    path('gerenciarCoordenador/<int:curso_id>/', views.gerenciarCoordenador, name='gerenciarCoordenador'),
+    path('coordenador/<int:curso_id>/<int:coordenador_id>/', CoordenadorDetailView.as_view(), name='coordenador-detail'),
+    path('coordenador/<int:curso_id>/<int:coordenador_id>/delete/', CoordenadorDeleteView.as_view(), name='coordenador-delete'),
+    path('coordenador/<int:curso_id>/new/', CoordenadorCreateView.as_view(), name='coordenador-create'),
+    path('coordenador/<int:curso_id>/<int:coordenador_id>/update/', CoordenadorUpdateView.as_view(), name='coordenador-update'),
 ]

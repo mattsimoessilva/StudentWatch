@@ -1,6 +1,8 @@
 from django.shortcuts import redirect, render
 from .forms import ProfessorProfileForm, EstudanteProfileForm, UserForm, LoginForm, FiltrarPresencaForm2
 from django.contrib import messages
+from django.urls import reverse
+from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.models import Permission
@@ -30,9 +32,7 @@ def estudante_profile_view(request):
             permission = Permission.objects.get(codename='add_presenca')
             user.user_permissions.add(permission)
 
-            messages.success(request, f"Estudante cadastrado")
-            user_form = UserForm(prefix='UF')
-            profile_form = EstudanteProfileForm(prefix='PF')
+            return HttpResponseRedirect(reverse('gerenciarEstudante', kwargs={'pk': user.estudante_profile.curso.id}))
     else:
         user_form = UserForm(prefix='UF')
         profile_form = EstudanteProfileForm(prefix='PF')
