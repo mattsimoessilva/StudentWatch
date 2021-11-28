@@ -44,7 +44,7 @@ urlpatterns = [
     path('gerenciarDisciplina/<int:pk>/', views.gerenciarDisciplina, name='gerenciarDisciplina'),
     path('disciplina/<int:pk>/', DisciplinaDetailView.as_view(), name='disciplina-detail'),
     path('disciplina/<int:pk>/delete/', DisciplinaDeleteView.as_view(), name='disciplina-delete'),
-    path('disciplina/new/', DisciplinaCreateView.as_view(), name='disciplina-create'),
+    path('disciplina/<int:pk>/new/', DisciplinaCreateView.as_view(), name='disciplina-create'),
     path('disciplina/<int:pk>/update/', DisciplinaUpdateView.as_view(), name='disciplina-update'),
 
     #GERENCIAMENTO DE AULAS
@@ -52,7 +52,7 @@ urlpatterns = [
     path('gerenciarAula/<int:pk>/', views.gerenciarAula, name='gerenciarAula'),
     path('aula/<int:pk>/', AulaDetailView.as_view(), name='aula-detail'),
     path('aula/<int:pk>/delete/', AulaDeleteView.as_view(), name='aula-delete'),
-    path('aula/new/', AulaCreateView.as_view(), name='aula-create'),
+    path('aula/<int:pk>/new/', AulaCreateView.as_view(), name='aula-create'),
     path('aula/<int:pk>/update/', AulaUpdateView.as_view(), name='aula-update'),
 
     #GERENCIAMENTO DE CURSOS

@@ -5,7 +5,7 @@
             {% csrf_token %}
             <fieldset class="form-group">
                 <legend class="border-bottom mb-4">Deletar Curso</legend>
-                <p>Você tem certeza de que deseja deletar o curso "{{ object.user.first_name }} {{ object.user.last_name }}"?</p>
+                <p>Você tem certeza de que deseja deletar o curso "{{ object.nome }}"?</p>
             </fieldset>
             <div class="form-group text-center">
                 <button class="btn btn-outline-danger" type="submit">Deletar</button>

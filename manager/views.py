@@ -67,14 +67,30 @@ class DisciplinaCreateView(LoginRequiredMixin, CreateView):
     fields = ['nome', 'professor', 'curso']
     template_name = "manager/disciplina_form_create.html"
 
+    def get_success_url(self):
+        curso_id = self.kwargs["pk"]
+        return reverse("gerenciarDisciplina", kwargs={"pk": curso_id})
+
 class DisciplinaUpdateView(LoginRequiredMixin, UpdateView):
     model = Disciplina
     fields = ['nome', 'professor', 'curso']
     template_name = "manager/disciplina_form_update.html"
 
+    def get_success_url(self):
+        disciplina_id = self.kwargs["pk"]
+        disciplina = Disciplina.objects.get(id=disciplina_id)
+        curso_id = disciplina.curso.id
+        return reverse("gerenciarDisciplina", kwargs={"pk": curso_id})
+
 class DisciplinaDeleteView(LoginRequiredMixin, DeleteView):
     model = Disciplina
-    success_url = '/'
+    template_name = "manager/disciplina_confirm_delete.html"
+
+    def get_success_url(self):
+        disciplina_id = self.kwargs["pk"]
+        disciplina = Disciplina.objects.get(id=disciplina_id)
+        curso_id = disciplina.curso.id
+        return reverse("gerenciarDisciplina", kwargs={"pk": curso_id})
 
 
 
@@ -127,14 +143,29 @@ class AulaCreateView(LoginRequiredMixin, CreateView):
     fields = ['turno', 'disciplina', 'dia_semana']
     template_name = "manager/aula_form_create.html"
 
+    def get_success_url(self):
+        curso_id = self.kwargs["pk"]
+        return reverse("gerenciarAula", kwargs={"pk": curso_id})
+
 class AulaUpdateView(LoginRequiredMixin, UpdateView):
     model = Aula
     fields = ['turno', 'disciplina', 'dia_semana']
     template_name = "manager/aula_form_update.html"
 
+    def get_success_url(self):
+        aula_id = self.kwargs["pk"]
+        aula = Aula.objects.get(id=aula_id)
+        curso_id = aula.disciplina.curso.id
+        return reverse("gerenciarAula", kwargs={"pk": curso_id})
+
 class AulaDeleteView(LoginRequiredMixin, DeleteView):
     model = Aula
-    success_url = '/'
+
+    def get_success_url(self):
+        aula_id = self.kwargs["pk"]
+        aula = Aula.objects.get(id=aula_id)
+        curso_id = aula.disciplina.curso.id
+        return reverse("gerenciarAula", kwargs={"pk": curso_id})
 
 
 #GERENCIAMENTO DE CURSOS
@@ -161,6 +192,9 @@ class CursoCreateView(LoginRequiredMixin, CreateView):
     fields = ['nome', 'descricao', 'coordenador']
     template_name = "manager/curso_form_create.html"
 
+    def get_success_url(self):
+        return reverse("gerenciarCurso")
+
 class CursoUpdateView(LoginRequiredMixin, UpdateView):
     model = Curso
     fields = ['nome', 'descricao', 'coordenador']
@@ -168,7 +202,10 @@ class CursoUpdateView(LoginRequiredMixin, UpdateView):
 
 class CursoDeleteView(LoginRequiredMixin, DeleteView):
     model = Curso
-    success_url = '/'
+    template_name = "manager/curso_confirm_delete.html"
+
+    def get_success_url(self):
+        return reverse("gerenciarCurso")
 
 #GERENCIAMENTO DE ESTUDANTES
 @login_required
