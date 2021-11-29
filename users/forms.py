@@ -89,12 +89,7 @@ class FiltrarPresencaForm2(forms.Form):
         self.user = kwargs.pop('user', None)
         super(FiltrarPresencaForm2, self).__init__(*args, **kwargs) 
 
-        lista_profiles = ProfessorProfile.objects.all()
-        for x in range(0, len(lista_profiles), 1):
-            if(lista_profiles[x].user == self.user):
-                profile_id = lista_profiles[x].id
-
-        cursos = Professor_curso.objects.filter(professor = profile_id)
+        cursos = Professor_curso.objects.select_related().filter(professor = self.user.professor_profile.id)
 
         self.fields['curso'] = forms.ModelChoiceField(label="Curso", queryset=cursos, widget=forms.Select(attrs={'class': 'form-control', 'style': 'max-width: 500px;'}))
 
@@ -104,7 +99,8 @@ class FiltrarPresencaForm2(forms.Form):
 
         if 'curso' in self.data:
             try:
-                curso_id = int(self.data.get('curso'))
+                professor_curso_id = int(self.data.get('curso'))
+                curso_id = Professor_curso.objects.get(id=professor_curso_id).curso.id
                 self.fields['disciplina'] = forms.ModelChoiceField(label="Disciplina", queryset=Disciplina.objects.filter(curso_id=curso_id), widget=forms.Select(attrs={'class': 'form-control', 'style': 'max-width: 500px;'}))
             except (ValueError, TypeError):
                 pass  # invalid input from the client; ignore and fallback to empty City queryset

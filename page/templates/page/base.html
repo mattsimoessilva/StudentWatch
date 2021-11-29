@@ -68,7 +68,7 @@
               <div class="navbar-nav">
                 {% if user.is_authenticated %}
                   <div class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><span class="material-icons">account_circle</span> {{ user.get_username }}</a>
+                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><span class="material-icons">account_circle</span> {{ user.first_name }} {{ user.last_name }}</a>
                     <div class="dropdown-menu bg-steel border-0">
                       <a class="dropdown-item" href="{% url 'logout' %}"><span class="material-icons">logout</span></a>
                     </div>

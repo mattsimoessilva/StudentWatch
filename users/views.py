@@ -8,10 +8,9 @@ from django.contrib.auth import views as auth_views
 from django.contrib.auth.models import Permission
 from django.urls import reverse_lazy
 from .models import EstudanteProfile
-from manager.models import Presenca, Turno, Aula
+from manager.models import Presenca, Turno, Aula, Curso, Disciplina, Professor_curso
 import datetime
 import calendar
-from manager.models import Disciplina
 
 
 @login_required
@@ -164,8 +163,13 @@ def visualizarPresenca(request):
     return render(request, 'users/visualizar-presenca.html', context)
 
 def load_disciplinas(request):
-    curso_id = request.GET.get('curso')
-    disciplinas = Disciplina.objects.filter(curso_id=curso_id)
+    professor_curso_id = request.GET.get('curso')
+    print(professor_curso_id)
+    if(professor_curso_id == ''):
+        disciplinas = Disciplina.objects.none()
+    else:
+        curso_id = Professor_curso.objects.get(id=professor_curso_id).curso.id
+        disciplinas = Disciplina.objects.filter(curso_id=curso_id)
     return render(request, 'users/disciplina_dropdown.html', {'disciplinas': disciplinas})
 
 @login_required

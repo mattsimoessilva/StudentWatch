@@ -46,9 +46,13 @@ def gerenciarDisciplina(request, pk):
 @login_required
 @permission_required("manager.view_disciplina", raise_exception=True)
 def filtrarDisciplina(request):
-    cursos = Curso.objects.all()
 
-    if(cursos == []):
+    if request.user.tipo == "Coordenador":
+        cursos = Curso.objects.filter(coordenador = request.user.coordenador_profile.id)
+    else:
+        cursos = Curso.objects.all()
+
+    if(cursos == [] or not cursos):
         cursos = None
         messages.warning(request, f"Não há cursos")
 
@@ -123,9 +127,13 @@ def gerenciarAula(request, pk):
 @login_required
 @permission_required("manager.view_aula", raise_exception=True)
 def filtrarAula(request):
-    cursos = Curso.objects.all()
 
-    if(cursos == []):
+    if request.user.tipo == "Coordenador":
+        cursos = Curso.objects.filter(coordenador = request.user.coordenador_profile.id)
+    else:
+        cursos = Curso.objects.all()
+
+    if(cursos == [] or not cursos):
         cursos = None
         messages.warning(request, f"Não há cursos")
 
@@ -236,9 +244,13 @@ def gerenciarEstudante(request, pk):
 @login_required
 @permission_required("users.view_estudanteprofile", raise_exception=True)
 def filtrarEstudante(request):
-    cursos = Curso.objects.all()
 
-    if(cursos == []):
+    if request.user.tipo == "Coordenador":
+        cursos = Curso.objects.filter(coordenador = request.user.coordenador_profile.id)
+    else:
+        cursos = Curso.objects.all()
+
+    if(cursos == [] or not cursos):
         cursos = None
         messages.warning(request, f"Não há cursos")
 
@@ -347,9 +359,13 @@ def gerenciarProfessor(request, curso_id):
 @login_required
 @permission_required("users.view_professorprofile", raise_exception=True)
 def filtrarProfessor(request):
-    cursos = Curso.objects.all()
+    
+    if request.user.tipo == "Coordenador":
+        cursos = Curso.objects.filter(coordenador = request.user.coordenador_profile.id)
+    else:
+        cursos = Curso.objects.all()
 
-    if(cursos == []):
+    if(cursos == [] or not cursos):
         cursos = None
         messages.warning(request, f"Não há cursos")
 
