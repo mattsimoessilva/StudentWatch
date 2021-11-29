@@ -1,7 +1,7 @@
 {% extends "page/base.html" %}
 {% block content %}
     <div class="content-section">
-        <form method="POST" action="{% url 'visualizarPresenca' %}" id="FiltrarPresencaForm2" data-disciplinas-url="{% url 'ajax_load_disciplinas' %}">
+        <form method="POST" action="{% url 'visualizarPresenca' %}" id="FiltrarPresencaForm2" data-disciplinas-url="{% url 'ajax_load_disciplinas' %}" data-turnos-url="{% url 'ajax_load_turnos' %}">
             {% csrf_token %}
             <fieldset class="form-group">
                 <legend class="border-bottom mb-4">Defina os parâmetros de pesquisa</legend>
@@ -30,6 +30,38 @@
                 }
             });
     
+        });
+
+        $("#id_disciplina").change(function () {
+            var url = $("#FiltrarPresencaForm2").attr("data-turnos-url");  // get the url of the `load_cities` view
+            var disciplinaId = $(this).val();  // get the selected country ID from the HTML input
+            
+            $.ajax({                       // initialize an AJAX request
+                url: url,                    // set the url of the request (= localhost:8000/hr/ajax/load-cities/)
+                data: {
+                    'disciplina': disciplinaId       // add the country id to the GET parameters
+                },
+                success: function (data) {   // `data` is the return of the `load_cities` view function
+                    $("#id_turno").html(data);  // replace the contents of the city input with the data that came from the server
+                }
+            });
+
+        });
+
+        $("#id_curso").change(function () {
+            var url = $("#FiltrarPresencaForm2").attr("data-turnos-url");  // get the url of the `load_cities` view
+            var cursoId = $(this).val();  // get the selected country ID from the HTML input
+            
+            $.ajax({                       // initialize an AJAX request
+                url: url,                    // set the url of the request (= localhost:8000/hr/ajax/load-cities/)
+                data: {
+                    'curso': cursoId       // add the country id to the GET parameters
+                },
+                success: function (data) {   // `data` is the return of the `load_cities` view function
+                    $("#id_turno").html(data);  // replace the contents of the city input with the data that came from the server
+                }
+            });
+        
         });
     </script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>

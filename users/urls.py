@@ -17,4 +17,5 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(template_name='users/logout.html'), name='logout'),
 
     path('ajax/load-disciplinas/', user_views.load_disciplinas, name='ajax_load_disciplinas'),
+    path('ajax/load-turnos/', user_views.load_turnos, name='ajax_load_turnos'),
 ]

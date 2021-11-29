@@ -1,7 +1,7 @@
 from io import TextIOBase, UnsupportedOperation
 from django import forms
 from django.forms import ModelForm, TextInput, Textarea, EmailInput, Select, PasswordInput
-from manager.models import Curso, Disciplina, Professor_curso
+from manager.models import Curso, Disciplina, Professor_curso, Turno, Aula
 from .models import ProfessorProfile, EstudanteProfile, CoordenadorProfile
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import get_user_model
@@ -97,6 +97,8 @@ class FiltrarPresencaForm2(forms.Form):
 
         self.fields['data'] = forms.DateField(label="Data", widget=forms.DateInput(attrs={'class': 'form-control', 'style': 'max-width: 500px;'}))
 
+        self.fields['turno'] = forms.ModelChoiceField(label="Turno", queryset=Turno.objects.none(), widget=forms.Select(attrs={'class': 'form-control', 'style': 'max-width: 500px;'}))
+
         if 'curso' in self.data:
             try:
                 professor_curso_id = int(self.data.get('curso'))
@@ -105,6 +107,11 @@ class FiltrarPresencaForm2(forms.Form):
             except (ValueError, TypeError):
                 pass  # invalid input from the client; ignore and fallback to empty City queryset
 
+        if 'disciplina' in self.data:
+            try:
+                self.fields['turno'] = forms.ModelChoiceField(label="Turno", queryset=Turno.objects.all(), widget=forms.Select(attrs={'class': 'form-control', 'style': 'max-width: 500px;'}))
+            except (ValueError, TypeError):
+                pass  # invalid input from the client; ignore and fallback to empty City queryset
 
 class LoginForm(AuthenticationForm):
     required_css_class = 'required'

@@ -138,18 +138,22 @@ def registrarPresenca(request):
 def visualizarPresenca(request):
     if request.method=='POST':
         form = FiltrarPresencaForm2(request.POST, user = request.user)
+        print(form.errors)
         if form.is_valid():
             dados = form.cleaned_data
             disciplina = dados.get('disciplina')
             curso = dados.get('curso')
             data = dados.get('data')
+            turno = dados.get('turno')
             usuario = request.user
+
+
 
             presencas = []
             lista_presencas = Presenca.objects.all()
 
             for x in range(len(lista_presencas)-1, -1, -1):
-                if(lista_presencas[x].aula.disciplina.professor.user == usuario and lista_presencas[x].aula.disciplina == disciplina  and lista_presencas[x].data == data):
+                if(lista_presencas[x].aula.disciplina.professor.user == usuario and lista_presencas[x].aula.disciplina == disciplina  and lista_presencas[x].data == data and lista_presencas[x].aula.turno == turno):
                     presencas.append(lista_presencas[x])
                    
             if(presencas == []):
@@ -158,7 +162,10 @@ def visualizarPresenca(request):
 
             context = {
                 'presencas': presencas,
-                'curso': curso
+                'curso': curso,
+                'disciplina': disciplina,
+                'data': data,
+                'turno': turno
             }
     else:
         return redirect('filtrarPresenca')
@@ -167,13 +174,22 @@ def visualizarPresenca(request):
 
 def load_disciplinas(request):
     professor_curso_id = request.GET.get('curso')
-    print(professor_curso_id)
     if(professor_curso_id == ''):
         disciplinas = Disciplina.objects.none()
     else:
         curso_id = Professor_curso.objects.get(id=professor_curso_id).curso.id
         disciplinas = Disciplina.objects.filter(curso_id=curso_id, professor=request.user.professor_profile.id)
     return render(request, 'users/disciplina_dropdown.html', {'disciplinas': disciplinas})
+
+def load_turnos(request):
+    disciplina_id = request.GET.get('disciplina')
+    curso_id = request.GET.get('curso_id')
+    if(disciplina_id == '' or curso_id == ''):
+        turnos = Turno.objects.none()
+    else:
+        turnos = Turno.objects.all()
+
+    return render(request, 'users/turno_dropdown.html', {'turnos': turnos})
 
 @login_required
 @permission_required("manager.view_presenca", raise_exception=True)
