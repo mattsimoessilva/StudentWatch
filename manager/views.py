@@ -208,6 +208,9 @@ class CursoUpdateView(LoginRequiredMixin, UpdateView):
     fields = ['nome', 'descricao', 'coordenador']
     template_name = "manager/curso_form_update.html"
 
+    def get_success_url(self):
+        return reverse("gerenciarCurso")
+
 class CursoDeleteView(LoginRequiredMixin, DeleteView):
     model = Curso
     template_name = "manager/curso_confirm_delete.html"

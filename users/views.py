@@ -84,6 +84,7 @@ def registrarPresenca(request):
     turno = None
     aula = None
     presenca_anterior = 0
+    presenca_registrada = False
 
     lista_turnos = Turno.objects.all()
     for x in range(0, len(lista_turnos), 1):
@@ -112,6 +113,7 @@ def registrarPresenca(request):
             reg = Presenca(estudante=profile, data=data, aula=aula)
             reg.save()
             messages.success(request, f"Presença registrada")
+            presenca_registrada = True
 
     
     if(curso == None or aula == None or turno == None):
@@ -125,7 +127,8 @@ def registrarPresenca(request):
             'curso': curso,
             'disciplina': aula,
             'turno': turno,
-            'presenca_anterior': presenca_anterior
+            'presenca_anterior': presenca_anterior,
+            'presenca_registrada': presenca_registrada
     }
     return render(request, 'users/registrar-presenca.html', context)
 

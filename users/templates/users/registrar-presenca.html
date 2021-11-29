@@ -1,11 +1,5 @@
 {% extends "page/base.html" %}
 {% block content %}
-<form method="POST" action="{% url 'logout' %}">
-    {% csrf_token %}
-    <div class="form-group text-center">
-        <button class="btn btn-outline-info" type="submit">Sair do Sistema</button>
-    </div>
-</form>
 {% if curso != None or disciplina != None or curso != None %}
     <div class="content-section">
         <legend class="border-bottom mb-4">Dados sobre a aula atual</legend>
@@ -44,7 +38,7 @@
                 </td>
             </tr>
         </table>
-        {% if presenca_anterior == 0 %}
+        {% if presenca_anterior == 0 and presenca_registrada == False %}
             <form method="POST">
                 {% csrf_token %}
                 <div class="form-group text-center">
