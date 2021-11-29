@@ -56,7 +56,8 @@ class Presenca(models.Model):
     aula = models.ForeignKey(Aula, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
-        return str(self.estudante)
+        presenca = str(self.estudante)+" | "+str(self.aula)+" | "+str(self.data)
+        return presenca
 
 class Professor_curso(models.Model):
     professor = models.ForeignKey(ProfessorProfile, on_delete=models.CASCADE, null=True) 
