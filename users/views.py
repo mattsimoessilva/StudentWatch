@@ -169,7 +169,7 @@ def load_disciplinas(request):
         disciplinas = Disciplina.objects.none()
     else:
         curso_id = Professor_curso.objects.get(id=professor_curso_id).curso.id
-        disciplinas = Disciplina.objects.filter(curso_id=curso_id)
+        disciplinas = Disciplina.objects.filter(curso_id=curso_id, professor=request.user.professor_profile.id)
     return render(request, 'users/disciplina_dropdown.html', {'disciplinas': disciplinas})
 
 @login_required
