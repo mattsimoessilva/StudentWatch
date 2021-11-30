@@ -87,6 +87,7 @@ class DisciplinaCreateView(LoginRequiredMixin, CreateView):
         return HttpResponseRedirect(reverse('gerenciarDisciplina', kwargs={'pk': curso_id}))
 
 
+
 def load_professores(request):
     curso_id = request.GET.get('curso')
     if(curso_id == ''):
