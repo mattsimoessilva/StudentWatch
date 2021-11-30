@@ -415,7 +415,7 @@ class EstudanteCreateView(CreateView):
                                                     )        
 
 
-def load_disciplinas(request):
+def load_disciplinas_estudante(request):
     curso_id = request.GET.get('curso')
     if(curso_id == ''):
         disciplinas = Disciplina.objects.none()

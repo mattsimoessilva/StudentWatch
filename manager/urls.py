@@ -87,5 +87,5 @@ urlpatterns = [
     path('coordenador/<int:curso_id>/new/', CoordenadorCreateView.as_view(), name='coordenador-create'),
     path('coordenador/<int:curso_id>/<int:coordenador_id>/update/', CoordenadorUpdateView.as_view(), name='coordenador-update'),
 
-    path('ajax/load-disciplinas/', views.load_disciplinas, name='ajax_load_disciplinas'),
+    path('ajax/load-disciplinas-estudante/', views.load_disciplinas_estudante, name='ajax_load_disciplinas_estudante'),
 ]

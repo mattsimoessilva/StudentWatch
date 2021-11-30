@@ -64,8 +64,7 @@ class Professor_curso(models.Model):
     curso = models.ForeignKey(Curso, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
-        professor_curso = str(self.professor)+" | "+str(self.curso)
-        return professor_curso  
+        return str(self.curso)  
 
 class Estudante_disciplina(models.Model):
     estudante = models.ForeignKey(EstudanteProfile, on_delete=models.CASCADE, null=True)

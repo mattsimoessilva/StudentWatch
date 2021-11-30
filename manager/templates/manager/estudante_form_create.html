@@ -3,7 +3,7 @@
 {% block content %}
     <div class="{{ tag }}">{{ mensagem }}</div>
     <div class="content-section">
-        <form method="POST" id="CadastrarEstudanteForm" data-disciplinas-url="{% url 'ajax_load_disciplinas' %}">
+        <form method="POST" id="CadastrarEstudanteForm" data-disciplinas-url="{% url 'ajax_load_disciplinas_estudante' %}">
             {% csrf_token %}
             <fieldset class="form-group">
                 <legend class="border-bottom mb-4">Cadastrar um Estudante</legend>
