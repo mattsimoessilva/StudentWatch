@@ -1,6 +1,7 @@
 {% extends "page/base.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
+    <div class="{{ tag }}">{{ mensagem }}</div>
     <div class="content-section">
         <form method="POST" id="CadastrarEstudanteForm" data-disciplinas-url="{% url 'ajax_load_disciplinas' %}">
             {% csrf_token %}

@@ -10,5 +10,45 @@
         <fieldset class="form-group">
             <legend class="border-bottom mb-4"><span class="material-icons">face</span> {{ object.user.first_name }} {{ object.user.last_name }}</legend>
             <p><span class="material-icons">mail</span> {{ object.user.email }}</p>
+            <table class="table table-bordered table-sm">
+                {% for curso in cursos %}
+                    {% if forloop.first %}
+                        <tr>
+                            <thead>
+                                <span class="material-icons">assignment</span>
+                            </thead>
+                            <td>
+                                {{ curso.curso }}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td>
+                                {{ curso.curso }}
+                            </td>
+                        </tr>       
+                    {% endif %}
+                {% endfor %}
+            </table>
+            <table class="table table-bordered table-sm">
+                {% for disciplina in disciplinas %}
+                    {% if forloop.first %}
+                        <tr>
+                            <thead>
+                                <span class="material-icons">book</span>
+                            </thead>
+                            <td>
+                                {{ disciplina }}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td>
+                                {{ disciplina }}
+                            </td>
+                        </tr>       
+                    {% endif %}
+                {% endfor %}
+            </table>
     </div>
 {% endblock content %}
