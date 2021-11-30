@@ -2,7 +2,7 @@ from django.http.response import HttpResponseRedirectBase
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.http import HttpResponseRedirect, HttpResponseNotModified
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.models import Permission
 from django.views.generic import(
     DetailView,
@@ -64,10 +64,12 @@ def filtrarDisciplina(request):
     return render(request, 'manager/filtrar-disciplina.html', context)
 
 
-class DisciplinaDetailView(LoginRequiredMixin, DetailView):
+class DisciplinaDetailView(PermissionRequiredMixin, LoginRequiredMixin, DetailView):
+    permission_required = 'manager.view_disciplina'
     model = Disciplina
 
-class DisciplinaCreateView(LoginRequiredMixin, CreateView):
+class DisciplinaCreateView(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
+    permission_required = 'manager.add_disciplina'
     template_name = "manager/disciplina_form_create.html"
 
     def get(self, request, *args, **kwargs):
@@ -103,7 +105,8 @@ def load_professores(request):
     return render(request, 'manager/professor_dropdown.html', {'professores': professores})
 
 
-class DisciplinaUpdateView(LoginRequiredMixin, UpdateView):
+class DisciplinaUpdateView(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
+    permission_required = 'manager.change_disciplina'
     template_name = "manager/disciplina_form_create.html"
 
     def get(self, request, *args, **kwargs):
@@ -130,7 +133,8 @@ class DisciplinaUpdateView(LoginRequiredMixin, UpdateView):
         return HttpResponseRedirect(reverse('gerenciarDisciplina', kwargs={'pk': curso_id}))
 
 
-class DisciplinaDeleteView(LoginRequiredMixin, DeleteView):
+class DisciplinaDeleteView(PermissionRequiredMixin, LoginRequiredMixin, DeleteView):
+    permission_required = 'manager.delete_disciplina'
     model = Disciplina
     template_name = "manager/disciplina_confirm_delete.html"
 
@@ -187,10 +191,12 @@ def filtrarAula(request):
     
     return render(request, 'manager/filtrar-aula.html', context)
 
-class AulaDetailView(LoginRequiredMixin, DetailView):
+class AulaDetailView(PermissionRequiredMixin, LoginRequiredMixin, DetailView):
+    permission_required = 'manager.view_aula'
     model = Aula
 
-class AulaCreateView(LoginRequiredMixin, CreateView):
+class AulaCreateView(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
+    permission_required = 'manager.add_aula'
     model = Aula
     fields = ['turno', 'disciplina', 'dia_semana']
     template_name = "manager/aula_form_create.html"
@@ -199,7 +205,8 @@ class AulaCreateView(LoginRequiredMixin, CreateView):
         curso_id = self.kwargs["pk"]
         return reverse("gerenciarAula", kwargs={"pk": curso_id})
 
-class AulaUpdateView(LoginRequiredMixin, UpdateView):
+class AulaUpdateView(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
+    permission_required = 'manager.change_aula'
     model = Aula
     fields = ['turno', 'disciplina', 'dia_semana']
     template_name = "manager/aula_form_update.html"
@@ -210,7 +217,8 @@ class AulaUpdateView(LoginRequiredMixin, UpdateView):
         curso_id = aula.disciplina.curso.id
         return reverse("gerenciarAula", kwargs={"pk": curso_id})
 
-class AulaDeleteView(LoginRequiredMixin, DeleteView):
+class AulaDeleteView(PermissionRequiredMixin, LoginRequiredMixin, DeleteView):
+    permission_required = 'manager.delete_aula'
     model = Aula
 
     def get_success_url(self):
@@ -236,10 +244,12 @@ def gerenciarCurso(request):
     
     return render(request, 'manager/gerenciar-curso.html', context)
 
-class CursoDetailView(LoginRequiredMixin, DetailView):
+class CursoDetailView(PermissionRequiredMixin, LoginRequiredMixin, DetailView):
+    permission_required = 'manager.view_curso'
     model = Curso
 
-class CursoCreateView(LoginRequiredMixin, CreateView):
+class CursoCreateView(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
+    permission_required = 'manager.add_curso'
     model = Curso
     fields = ['nome', 'descricao', 'coordenador']
     template_name = "manager/curso_form_create.html"
@@ -247,7 +257,8 @@ class CursoCreateView(LoginRequiredMixin, CreateView):
     def get_success_url(self):
         return reverse("gerenciarCurso")
 
-class CursoUpdateView(LoginRequiredMixin, UpdateView):
+class CursoUpdateView(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
+    permission_required = 'manager.change_curso'
     model = Curso
     fields = ['nome', 'descricao', 'coordenador']
     template_name = "manager/curso_form_update.html"
@@ -255,7 +266,8 @@ class CursoUpdateView(LoginRequiredMixin, UpdateView):
     def get_success_url(self):
         return reverse("gerenciarCurso")
 
-class CursoDeleteView(LoginRequiredMixin, DeleteView):
+class CursoDeleteView(PermissionRequiredMixin, LoginRequiredMixin, DeleteView):
+    permission_required = 'manager.delete_curso'
     model = Curso
     template_name = "manager/curso_confirm_delete.html"
 
@@ -308,7 +320,8 @@ def filtrarEstudante(request):
     return render(request, 'manager/filtrar-estudante.html', context)
 
 
-class EstudanteDetailView(LoginRequiredMixin, DetailView):
+class EstudanteDetailView(PermissionRequiredMixin, LoginRequiredMixin, DetailView):
+    permission_required = 'users.view_estudanteprofile'
     template_name = "manager/estudante_detail.html"
 
     def get(self, request, *args, **kwargs):
@@ -324,7 +337,8 @@ class EstudanteDetailView(LoginRequiredMixin, DetailView):
     
         return render(request, self.template_name, context)
 
-class EstudanteDeleteView(DeleteView):
+class EstudanteDeleteView(PermissionRequiredMixin, LoginRequiredMixin, DeleteView):
+    permission_required = 'users.delete_estudanteprofile'
     model = EstudanteProfile
     template_name = "manager/estudante_confirm_delete.html"
 
@@ -344,7 +358,8 @@ class EstudanteDeleteView(DeleteView):
         return HttpResponseRedirect(reverse('gerenciarEstudante', kwargs={'pk': curso_id}))
 
 
-class EstudanteUpdateView(UpdateView):
+class EstudanteUpdateView(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
+    permission_required = 'users.change_estudanteprofile'
     template_name = "manager/estudante_form_update.html"
 
     def get(self, request, *args, **kwargs):
@@ -409,7 +424,8 @@ class EstudanteUpdateView(UpdateView):
                                                     )
             
 
-class EstudanteCreateView(CreateView):
+class EstudanteCreateView(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
+    permission_required = 'users.add_estudanteprofile'
     template_name = "manager/estudante_form_create.html"
 
     def get(self, request, *args, **kwargs):
@@ -512,7 +528,8 @@ def filtrarProfessor(request):
     
     return render(request, 'manager/filtrar-professor.html', context)
 
-class ProfessorDetailView(LoginRequiredMixin, DetailView):
+class ProfessorDetailView(PermissionRequiredMixin, LoginRequiredMixin, DetailView):
+    permission_required = 'users.view_professorprofile'
     template_name = "manager/professor_detail.html"
 
     def get(self, request, *args, **kwargs):
@@ -533,7 +550,8 @@ class ProfessorDetailView(LoginRequiredMixin, DetailView):
         return render(request, self.template_name, context)
 
 
-class ProfessorDeleteView(DeleteView):
+class ProfessorDeleteView(PermissionRequiredMixin, LoginRequiredMixin, DeleteView):
+    permission_required = 'users.delete_professorprofile'
     template_name = "manager/professor_confirm_delete.html"
 
     def get(self, request, *args, **kwargs):
@@ -565,7 +583,8 @@ class ProfessorDeleteView(DeleteView):
         return HttpResponseRedirect(reverse('gerenciarProfessor', kwargs={'curso_id': curso_id}))
 
 
-class ProfessorUpdateView(UpdateView):
+class ProfessorUpdateView(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
+    permission_required = 'users.change_professorprofile'
     template_name = "manager/professor_form_update.html"
 
     def get(self, request, *args, **kwargs):
@@ -628,7 +647,8 @@ class ProfessorUpdateView(UpdateView):
                                                     )
 
 
-class ProfessorCreateView(CreateView):
+class ProfessorCreateView(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
+    permission_required = 'users.add_professorprofile'
     template_name = "manager/professor_form_create.html"
 
     def get(self, request, *args, **kwargs):
@@ -676,7 +696,7 @@ class ProfessorCreateView(CreateView):
 
 #GERENCIAMENTO DE COORDENADORES
 @login_required
-@permission_required("manager.view_coordenador_profile", raise_exception=True)
+@permission_required("users.view_coordenadorprofile", raise_exception=True)
 def gerenciarCoordenador(request, curso_id):
     curso_id = curso_id
     curso = Curso.objects.get(id=curso_id)
@@ -703,7 +723,7 @@ def gerenciarCoordenador(request, curso_id):
 
 
 @login_required
-@permission_required("users.view_coordenador_profile", raise_exception=True)
+@permission_required("users.view_coordenadorprofile", raise_exception=True)
 def filtrarCoordenador(request):
     cursos = Curso.objects.all()
 
@@ -717,7 +737,8 @@ def filtrarCoordenador(request):
     
     return render(request, 'manager/filtrar-coordenador.html', context)
 
-class CoordenadorDetailView(LoginRequiredMixin, DetailView):
+class CoordenadorDetailView(PermissionRequiredMixin, LoginRequiredMixin, DetailView):
+    permission_required = 'users.view_coordenadorprofile'
     template_name = "manager/coordenador_detail.html"
 
     def get(self, request, *args, **kwargs):
@@ -733,7 +754,8 @@ class CoordenadorDetailView(LoginRequiredMixin, DetailView):
     
         return render(request, self.template_name, context)
 
-class CoordenadorDeleteView(DeleteView):
+class CoordenadorDeleteView(PermissionRequiredMixin, LoginRequiredMixin, DeleteView):
+    permission_required = 'users.delete_coordenadorprofile'
     template_name = "manager/coordenador_confirm_delete.html"
 
     def get(self, request, *args, **kwargs):
@@ -765,7 +787,8 @@ class CoordenadorDeleteView(DeleteView):
         return HttpResponseRedirect(reverse('gerenciarCoordenador', kwargs={'curso_id': curso_id}))
 
 
-class CoordenadorCreateView(CreateView):
+class CoordenadorCreateView(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
+    permission_required = 'users.add_coordenadorprofile'
     template_name = "manager/coordenador_form_create.html"
 
     def get(self, request, *args, **kwargs):
@@ -796,7 +819,8 @@ class CoordenadorCreateView(CreateView):
         return HttpResponseRedirect(reverse('gerenciarCoordenador', kwargs={'curso_id': curso_id}))
 
 
-class CoordenadorUpdateView(UpdateView):
+class CoordenadorUpdateView(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
+    permission_required = 'users.change_coordenadorprofile'
     template_name = "manager/coordenador_form_update.html"
 
     def get(self, request, *args, **kwargs):
