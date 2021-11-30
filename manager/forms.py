@@ -2,7 +2,7 @@ from django import forms
 from django.forms.fields import MultipleChoiceField
 from django.forms.widgets import CheckboxSelectMultiple
 from .models import Curso, Disciplina, Professor_curso, Aula
-from users.models import CoordenadorProfile
+from users.models import CoordenadorProfile, ProfessorProfile
 from django.forms import ModelForm, TextInput, Textarea, EmailInput, Select, PasswordInput
 
 
@@ -55,4 +55,24 @@ class EstudanteDisciplinaForm(forms.Form):
                 self.fields['disciplina'] = forms.MultipleChoiceField(label="Disciplina(s)", choices=lista_disciplinas, widget=CheckboxSelectMultiple())
             except (ValueError, TypeError):
                 pass  # invalid input from the client; ignore and fallback to empty City queryset
-        
+
+class DisciplinaForm(forms.ModelForm):
+    class Meta:
+        model = Disciplina
+        fields = ['nome', 'curso', 'professor']
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super(DisciplinaForm, self).__init__(*args, **kwargs) 
+
+        cursos = Curso.objects.all()
+
+        self.fields['nome'] = forms.CharField(label="Nome", widget=forms.TextInput(attrs={'class': 'form-control', 'style': 'max-width: 500px;'}))
+        self.fields['curso'] = forms.ModelChoiceField(label="Curso", queryset=cursos, widget=forms.Select(attrs={'class': 'form-control', 'style': 'max-width: 500px;'}))
+        self.fields['professor'] = forms.ModelChoiceField(label="Professor", queryset=ProfessorProfile.objects.none(), widget=forms.Select(attrs={'class': 'form-control', 'style': 'max-width: 500px;'}))
+
+        if 'curso' in self.data:
+            try:
+                self.fields['professor'] = forms.ModelChoiceField(label="Disciplina", queryset=ProfessorProfile.objects.all(), widget=forms.Select(attrs={'class': 'form-control', 'style': 'max-width: 500px;'}))
+            except (ValueError, TypeError):
+                pass  # invalid input from the client; ignore and fallback to empty City queryset

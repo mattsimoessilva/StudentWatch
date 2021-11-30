@@ -14,7 +14,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 
 from users.models import CoordenadorProfile, EstudanteProfile
-from .forms import EscolherCursoForm, ProfessorCursoForm, EstudanteDisciplinaForm
+from .forms import EscolherCursoForm, ProfessorCursoForm, EstudanteDisciplinaForm, DisciplinaForm
 from .models import Disciplina, Aula, Curso, Estudante_disciplina, Professor_curso
 from users.models import User, EstudanteProfile, ProfessorProfile, CoordenadorProfile
 from users.forms import UserForm, EstudanteProfileForm, ProfessorProfileForm, CoordenadorProfileForm
@@ -68,24 +68,66 @@ class DisciplinaDetailView(LoginRequiredMixin, DetailView):
     model = Disciplina
 
 class DisciplinaCreateView(LoginRequiredMixin, CreateView):
-    model = Disciplina
-    fields = ['nome', 'professor', 'curso']
     template_name = "manager/disciplina_form_create.html"
 
-    def get_success_url(self):
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name, {
+                                                    'disciplina_form': DisciplinaForm(),
+                                                    }
+                                                )
+
+    def post(self, request, *args, **kwargs):
         curso_id = self.kwargs["pk"]
-        return reverse("gerenciarDisciplina", kwargs={"pk": curso_id})
+        disciplina_form = DisciplinaForm(request.POST)
+
+        if disciplina_form.is_valid():
+            disciplina = disciplina_form.save(commit=False)
+            disciplina.save()
+
+        return HttpResponseRedirect(reverse('gerenciarDisciplina', kwargs={'pk': curso_id}))
+
+
+def load_professores(request):
+    curso_id = request.GET.get('curso')
+    if(curso_id == ''):
+        professores = []
+    else:
+        professores = []
+        lista_professor_curso = Professor_curso.objects.all()
+
+        for x in range(0, len(lista_professor_curso), 1):
+            if(lista_professor_curso[x].curso.id == int(curso_id)):
+                professores.append(lista_professor_curso[x].professor)
+
+    return render(request, 'manager/professor_dropdown.html', {'professores': professores})
+
 
 class DisciplinaUpdateView(LoginRequiredMixin, UpdateView):
-    model = Disciplina
-    fields = ['nome', 'professor', 'curso']
-    template_name = "manager/disciplina_form_update.html"
+    template_name = "manager/disciplina_form_create.html"
 
-    def get_success_url(self):
-        disciplina_id = self.kwargs["pk"]
+    def get(self, request, *args, **kwargs):
+        disciplina_id = self.kwargs['pk']
+
+        disciplina = Disciplina.objects.get(id=disciplina_id)
+
+        return render(request, self.template_name, {
+                                                    'disciplina_form': DisciplinaForm(instance=disciplina),
+                                                    }
+                                                )
+
+    def post(self, request, *args, **kwargs):
+        disciplina_id = self.kwargs['pk']
+
         disciplina = Disciplina.objects.get(id=disciplina_id)
         curso_id = disciplina.curso.id
-        return reverse("gerenciarDisciplina", kwargs={"pk": curso_id})
+
+        disciplina_form = DisciplinaForm(request.POST, instance=disciplina)
+
+        if disciplina_form.is_valid():
+            disciplina_form.save()
+
+        return HttpResponseRedirect(reverse('gerenciarDisciplina', kwargs={'pk': curso_id}))
+
 
 class DisciplinaDeleteView(LoginRequiredMixin, DeleteView):
     model = Disciplina

@@ -1,0 +1,5 @@
+<option value selected>---------</option>
+
+{% for professor in professores %}
+    <option value="{{ professor.id }}">{{ professor.user }}</option>
+{% endfor %}
