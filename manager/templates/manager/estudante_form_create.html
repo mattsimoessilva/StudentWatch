@@ -1,0 +1,38 @@
+{% extends "page/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <div class="content-section">
+        <form method="POST" id="CadastrarEstudanteForm" data-disciplinas-url="{% url 'ajax_load_disciplinas' %}">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Cadastrar um Estudante</legend>
+                {{ user_form|crispy }}
+                {{ profile_form|crispy }}
+                {{ disciplina_form|crispy }}
+            </fieldset>
+            <div class="form-group text-center">
+                <button class="btn btn-outline-info" type="submit">Cadastrar</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        console.log("1")
+        $("#id_DF-curso").change(function () {
+            console.log("2")
+            var url = $("#CadastrarEstudanteForm").attr("data-disciplinas-url");  // get the url of the `load_cities` view
+            var cursoId = $(this).val();  // get the selected country ID from the HTML input
+            
+            $.ajax({                       // initialize an AJAX request
+                url: url,                    // set the url of the request (= localhost:8000/hr/ajax/load-cities/)
+                data: {
+                    'curso': cursoId       // add the country id to the GET parameters
+                },
+                success: function (data) {   // `data` is the return of the `load_cities` view function
+                    $("#div_id_DF-disciplina").html(data);  // replace the contents of the city input with the data that came from the server
+                }
+            });
+    
+        });
+    </script>
+{% endblock content %}

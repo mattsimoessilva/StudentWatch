@@ -36,17 +36,12 @@ class UserForm(UserCreationForm):
 class EstudanteProfileForm(forms.ModelForm):
     class Meta:
         model = EstudanteProfile
-        fields = ('matricula', 'curso',)
+        fields = ('matricula',)
         widgets = {
             'matricula': TextInput(attrs={
                 'class': "form-control", 
                 'style': 'max-width: 500px;',
                 'placeholder': 'Digite o Nº de matrícula'
-            }),
-            'curso': Select(attrs={
-                'class': "form-control", 
-                'style': 'max-width: 500px;',
-                'choices': Curso,
             })
         }
         labels = {

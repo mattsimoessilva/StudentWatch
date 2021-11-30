@@ -23,6 +23,7 @@ from .views import (
     #GERENCIAMENTO DE ESTUDANTES
     EstudanteDetailView,
     EstudanteDeleteView,
+    EstudanteCreateView,
     EstudanteUpdateView,
 
     #GERENCIAMENTO DE PROFESSORES
@@ -67,6 +68,7 @@ urlpatterns = [
     path('gerenciarEstudante/<int:pk>/', views.gerenciarEstudante, name='gerenciarEstudante'),
     path('estudante/<int:pk>/', EstudanteDetailView.as_view(), name='estudante-detail'),
     path('estudante/<int:pk>/delete/', EstudanteDeleteView.as_view(), name='estudante-delete'),
+    path('estudante/new/', EstudanteCreateView.as_view(), name='estudante-create'),
     path('estudante/<int:pk>/update/', EstudanteUpdateView.as_view(), name='estudante-update'),
 
     #GERENCIAMENTO DE PROFESSORES
@@ -84,4 +86,6 @@ urlpatterns = [
     path('coordenador/<int:curso_id>/<int:coordenador_id>/delete/', CoordenadorDeleteView.as_view(), name='coordenador-delete'),
     path('coordenador/<int:curso_id>/new/', CoordenadorCreateView.as_view(), name='coordenador-create'),
     path('coordenador/<int:curso_id>/<int:coordenador_id>/update/', CoordenadorUpdateView.as_view(), name='coordenador-update'),
+
+    path('ajax/load-disciplinas/', views.load_disciplinas, name='ajax_load_disciplinas'),
 ]

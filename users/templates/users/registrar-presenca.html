@@ -1,6 +1,6 @@
 {% extends "page/base.html" %}
 {% block content %}
-{% if curso != None or disciplina != None or curso != None %}
+{% if curso != None and turno != None and aula != None and disciplina != None %}
     <div class="content-section">
         <legend class="border-bottom mb-4">Dados sobre a aula atual</legend>
         <table class="table table">
@@ -23,7 +23,7 @@
                     Disciplina
                 </td>
                 <td>
-                    {{ disciplina }}
+                    {{ aula.disciplina }}
                 </td>
             </tr>
             <tr>

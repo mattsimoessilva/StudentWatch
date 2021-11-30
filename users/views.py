@@ -8,7 +8,7 @@ from django.contrib.auth import views as auth_views
 from django.contrib.auth.models import Permission
 from django.urls import reverse_lazy
 from .models import EstudanteProfile
-from manager.models import Presenca, Turno, Aula, Curso, Disciplina, Professor_curso
+from manager.models import Presenca, Turno, Aula, Curso, Disciplina, Professor_curso, Estudante_disciplina
 import datetime
 import calendar
 
@@ -96,11 +96,15 @@ def registrarPresenca(request):
         if(lista_profiles[x].user == usuario):
             profile = lista_profiles[x]
 
+    
+
     lista_aulas = Aula.objects.all()
     for x in range(0, len(lista_aulas), 1):
+
         if(lista_aulas[x].disciplina.curso == profile.curso and lista_aulas[x].turno == turno and lista_aulas[x].dia_semana.nome == dia_semana):
             aula = lista_aulas[x]
             curso = lista_aulas[x].disciplina.curso
+            disciplina = Estudante_disciplina.objects.filter(estudante=usuario.estudante_profile.id, disciplina=aula.disciplina.id)
 
     lista_presencas = Presenca.objects.all()
     for x in range(0, len(lista_presencas), 1):
@@ -115,8 +119,10 @@ def registrarPresenca(request):
             messages.success(request, f"Presença registrada")
             presenca_registrada = True
 
+    print(disciplina)
     
-    if(curso == None or aula == None or turno == None):
+    if(curso == None or aula == None or turno == None or not disciplina):
+        disciplina = None
         messages.warning(request, f"Desculpe, não há nenhuma aula no momento")
 
     if(presenca_anterior != 0):
@@ -125,10 +131,11 @@ def registrarPresenca(request):
 
     context = {
             'curso': curso,
-            'disciplina': aula,
+            'aula': aula,
             'turno': turno,
             'presenca_anterior': presenca_anterior,
-            'presenca_registrada': presenca_registrada
+            'presenca_registrada': presenca_registrada,
+            'disciplina': disciplina
     }
     return render(request, 'users/registrar-presenca.html', context)
 

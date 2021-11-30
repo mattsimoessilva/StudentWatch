@@ -1,6 +1,7 @@
+from django.http.response import HttpResponseRedirectBase
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponseNotModified
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import Permission
 from django.views.generic import(
@@ -13,8 +14,8 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 
 from users.models import CoordenadorProfile, EstudanteProfile
-from .forms import EscolherCursoForm, ProfessorCursoForm
-from .models import Disciplina, Aula, Curso, Professor_curso
+from .forms import EscolherCursoForm, ProfessorCursoForm, EstudanteDisciplinaForm
+from .models import Disciplina, Aula, Curso, Estudante_disciplina, Professor_curso
 from users.models import User, EstudanteProfile, ProfessorProfile, CoordenadorProfile
 from users.forms import UserForm, EstudanteProfileForm, ProfessorProfileForm, CoordenadorProfileForm
 
@@ -265,8 +266,20 @@ def filtrarEstudante(request):
 
 
 class EstudanteDetailView(LoginRequiredMixin, DetailView):
-    model = EstudanteProfile
     template_name = "manager/estudante_detail.html"
+
+    def get(self, request, *args, **kwargs):
+        estudante_id = self.kwargs['pk']
+
+        estudante = EstudanteProfile.objects.get(id=estudante_id)
+        disciplinas = Estudante_disciplina.objects.filter(estudante = estudante_id)
+
+        context = {
+            'object': estudante,
+            'disciplinas': disciplinas,
+        }
+    
+        return render(request, self.template_name, context)
 
 class EstudanteDeleteView(DeleteView):
     model = EstudanteProfile
@@ -289,7 +302,7 @@ class EstudanteDeleteView(DeleteView):
 
 
 class EstudanteUpdateView(UpdateView):
-    template_name = "manager/estudante_form.html"
+    template_name = "manager/estudante_form_update.html"
 
     def get(self, request, *args, **kwargs):
         estudanteprofile_id = self.kwargs['pk']
@@ -306,6 +319,7 @@ class EstudanteUpdateView(UpdateView):
         return render(request, self.template_name, {
                                                     'user_form': UserForm(instance=user, prefix='UF'),
                                                     'profile_form': EstudanteProfileForm(instance=estudanteprofile, prefix='PF'),
+                                                    'disciplina_form': EstudanteDisciplinaForm(prefix='DF')
                                                     }
                                                 )
 
@@ -324,14 +338,73 @@ class EstudanteUpdateView(UpdateView):
 
         user_form = UserForm(request.POST, instance=user, prefix='UF')
         profile_form = EstudanteProfileForm(request.POST, instance=estudanteprofile, prefix='PF')
+        disciplina_form = EstudanteDisciplinaForm(request.POST, prefix='DF')
 
         # Check form validation
-        if user_form.is_valid() and profile_form.is_valid():
+        if user_form.is_valid() and profile_form.is_valid() and disciplina_form.is_valid():
             user_form.save()
             profile_form.save()
 
+            Estudante_disciplina.objects.filter(estudante=estudanteprofile).delete()
+
+            disciplinas = disciplina_form.cleaned_data.get('disciplina')
+            for x in range(0, len(disciplinas), 1):
+                disciplina = Disciplina.objects.get(id=disciplinas[x])
+                estudante_disciplina = Estudante_disciplina(estudante=estudanteprofile, disciplina=disciplina)
+                estudante_disciplina.save()
+
         return HttpResponseRedirect(reverse('gerenciarEstudante', kwargs={'pk': estudanteprofile.curso.id}))
             
+
+class EstudanteCreateView(CreateView):
+    template_name = "manager/estudante_form_create.html"
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name, {
+                                                    'user_form': UserForm(prefix='UF'),
+                                                    'profile_form': EstudanteProfileForm(prefix='PF'),
+                                                    'disciplina_form': EstudanteDisciplinaForm(prefix='DF')
+                                                    }
+                                                )
+
+    def post(self, request, *args, **kwargs):
+        user_form = UserForm(request.POST, prefix='UF')
+        profile_form = EstudanteProfileForm(request.POST, prefix='PF')
+        disciplina_form = EstudanteDisciplinaForm(request.POST, prefix='DF')
+
+        print(disciplina_form.errors)
+
+        # Check form validation
+        if user_form.is_valid() and profile_form.is_valid() and disciplina_form.is_valid():
+            user = user_form.save(commit=False)
+            user.tipo = "Estudante"
+            user.save()
+
+            user.estudante_profile.matricula = profile_form.cleaned_data.get('matricula')
+            user.estudante_profile.curso = disciplina_form.cleaned_data.get('curso')
+            user.estudante_profile.save()
+            permission = Permission.objects.get(codename='add_presenca')
+            user.user_permissions.add(permission)
+
+            estudante = user.estudante_profile
+            disciplinas = disciplina_form.cleaned_data.get('disciplina')
+            
+            for x in range(0, len(disciplinas), 1):
+                disciplina = Disciplina.objects.get(id=disciplinas[x])
+                disciplina_estudante = Estudante_disciplina(estudante=estudante, disciplina=disciplina)
+                disciplina_estudante.save()
+
+        return HttpResponseRedirect(reverse('gerenciarEstudante', kwargs={'pk': user.estudante_profile.curso.id}))
+
+
+def load_disciplinas(request):
+    curso_id = request.GET.get('curso')
+    if(curso_id == ''):
+        disciplinas = Disciplina.objects.none()
+    else:
+        disciplinas = Disciplina.objects.filter(curso_id=curso_id)
+    return render(request, 'manager/disciplina_checkbox.html', {'disciplinas': disciplinas})
+
 
 #GERENCIAMENTO DE PROFESSORES
 @login_required
@@ -464,19 +537,31 @@ class ProfessorUpdateView(UpdateView):
         user_form = UserForm(request.POST, instance=user, prefix='UF')
         curso_form = ProfessorCursoForm(request.POST, prefix='CF')
 
-        # Check form validation
-        if user_form.is_valid() and curso_form.is_valid():
-            user_form.save()
+        if(curso_form['curso'].value() != []):
+            print("batata")
+            # Check form validation
+            if user_form.is_valid() and curso_form.is_valid():
+                user_form.save()
 
-            Professor_curso.objects.filter(professor=professorprofile).delete()
+                Professor_curso.objects.filter(professor=professorprofile).delete()
 
-            cursos = curso_form.cleaned_data.get('curso')
-            for x in range(0, len(cursos), 1):
-                curso = Curso.objects.get(id=cursos[x])
-                professor_curso = Professor_curso(professor=professorprofile, curso=curso)
-                professor_curso.save()
+                cursos = curso_form.cleaned_data.get('curso')
 
-        return HttpResponseRedirect(reverse('gerenciarProfessor', kwargs={'curso_id': curso_id}))
+                for x in range(0, len(cursos), 1):
+                    curso = Curso.objects.get(id=cursos[x])
+                    professor_curso = Professor_curso(professor=professorprofile, curso=curso)
+                    professor_curso.save()
+
+                return HttpResponseRedirect(reverse('gerenciarProfessor', kwargs={'curso_id': curso_id}))
+        else:
+            return render(request, self.template_name, {
+                                                        'user_form': UserForm(instance=user, prefix='UF'),
+                                                        'curso_form': ProfessorCursoForm(prefix="CF"),
+                                                        'mensagem': "Por favor, escolha ao menos um curso",
+                                                        'tag': "alert alert-warning"
+                                                        }
+                                                    )
+
 
 class ProfessorCreateView(CreateView):
     template_name = "manager/professor_form_create.html"
@@ -495,24 +580,32 @@ class ProfessorCreateView(CreateView):
         user_form = UserForm(request.POST, prefix='UF')
         curso_form = ProfessorCursoForm(request.POST, prefix='CF')
 
-        # Check form validation
-        if user_form.is_valid() and curso_form.is_valid():
-            user = user_form.save(commit=False)
-            user.tipo = "Professor"
-            user.save()
+        if(curso_form['curso'].value() != []):
+            # Check form validation
+            if user_form.is_valid() and curso_form.is_valid():
+                user = user_form.save(commit=False)
+                user.tipo = "Professor"
+                user.save()
 
-            user.professor_profile.save()
-            permission = Permission.objects.get(codename='view_presenca')
-            permission2 = Permission.objects.get(codename='view_aula')
-            user.user_permissions.add(permission, permission2)
+                user.professor_profile.save()
+                permission = Permission.objects.get(codename='view_presenca')
+                permission2 = Permission.objects.get(codename='view_aula')
+                user.user_permissions.add(permission, permission2)
 
-            professor = user.professor_profile
-            cursos = curso_form.cleaned_data.get('curso')
-            for x in range(0, len(cursos), 1):
-                curso = Curso.objects.get(id=cursos[x])
-                professor_curso = Professor_curso(professor=professor, curso=curso)
-                professor_curso.save()
-
+                professor = user.professor_profile
+                cursos = curso_form.cleaned_data.get('curso')
+                for x in range(0, len(cursos), 1):
+                    curso = Curso.objects.get(id=cursos[x])
+                    professor_curso = Professor_curso(professor=professor, curso=curso)
+                    professor_curso.save()
+        else:
+            return render(request, self.template_name, {
+                                                        'user_form': UserForm(prefix='UF'),
+                                                        'curso_form': ProfessorCursoForm(prefix="CF"),
+                                                        'mensagem': "Por favor, escolha ao menos um curso",
+                                                        'tag': "alert alert-warning"
+                                                        }
+                                                    )
         return HttpResponseRedirect(reverse('gerenciarProfessor', kwargs={'curso_id': curso_id}))
 
 

@@ -12,5 +12,26 @@
             <p><span class="material-icons">bookmark</span> {{ object.matricula }}</p>
             <p><span class="material-icons">mail</span> {{ object.user.email }}</p>
             <p><span class="material-icons">source</span> {{ object.curso }}</p>
+
+            <table class="table table-bordered table-sm">
+                {% for disciplina in disciplinas %}
+                    {% if forloop.first %}
+                        <tr>
+                            <thead>
+                                <span class="material-icons">book</span>
+                            </thead>
+                            <td>
+                                {{ disciplina }}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td>
+                                {{ disciplina }}
+                            </td>
+                        </tr>       
+                    {% endif %}
+                {% endfor %}
+            </table>
     </div>
 {% endblock content %}

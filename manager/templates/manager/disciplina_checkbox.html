@@ -1,0 +1,11 @@
+<label class=" requiredField">
+    Disciplina(s)*
+</label>
+<div>
+    {% for disciplina in disciplinas %}
+        <div class="form-check">
+            <input type="checkbox" class="form-check-input" name="DF-disciplina" value="{{ disciplina.id }}">
+            <label class="form-check-label"> {{ disciplina.nome }}</label>
+        </div>
+    {% endfor %}
+</div>
