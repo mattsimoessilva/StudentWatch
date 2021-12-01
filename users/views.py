@@ -83,6 +83,7 @@ def registrarPresenca(request):
     curso = None
     turno = None
     aula = None
+    disciplina = None
     presenca_anterior = 0
     presenca_registrada = False
 
@@ -118,8 +119,6 @@ def registrarPresenca(request):
             reg.save()
             messages.success(request, f"Presença registrada")
             presenca_registrada = True
-
-    print(disciplina)
     
     if(curso == None or aula == None or turno == None or not disciplina):
         disciplina = None

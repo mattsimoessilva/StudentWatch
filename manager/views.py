@@ -107,7 +107,7 @@ def load_professores(request):
 
 class DisciplinaUpdateView(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
     permission_required = 'manager.change_disciplina'
-    template_name = "manager/disciplina_form_create.html"
+    template_name = "manager/disciplina_form_update.html"
 
     def get(self, request, *args, **kwargs):
         disciplina_id = self.kwargs['pk']
