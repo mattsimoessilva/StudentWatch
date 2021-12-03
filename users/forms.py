@@ -1,5 +1,6 @@
 from io import TextIOBase, UnsupportedOperation
 from django import forms
+from django.core.exceptions import ValidationError
 from django.forms import ModelForm, TextInput, Textarea, EmailInput, Select, PasswordInput
 from manager.models import Curso, Disciplina, Professor_curso, Turno, Aula
 from .models import ProfessorProfile, EstudanteProfile, CoordenadorProfile
@@ -32,6 +33,7 @@ class UserForm(UserCreationForm):
             'password1': 'Senha',
             'password2': 'Confirmação da Senha'
         }
+
 
 class EstudanteProfileForm(forms.ModelForm):
     class Meta:

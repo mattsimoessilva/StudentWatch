@@ -391,12 +391,32 @@ class EstudanteUpdateView(PermissionRequiredMixin, LoginRequiredMixin, UpdateVie
             if(lista_estudanteprofile[x].id == estudanteprofile_id):
                 user_id = lista_estudanteprofile[x].user.id
 
+
         user = User.objects.get(id=user_id)
         estudanteprofile = EstudanteProfile.objects.get(id=estudanteprofile_id)
 
         user_form = UserForm(request.POST, instance=user, prefix='UF')
         profile_form = EstudanteProfileForm(request.POST, instance=estudanteprofile, prefix='PF')
         disciplina_form = EstudanteDisciplinaForm(request.POST, prefix='DF')
+
+
+        email = user_form['email'].value()
+        check_instance_email = User.objects.filter(email=email, id=user_id).exists()
+        check_email = User.objects.filter(email=email).exists()
+
+        if(check_email == True and check_instance_email == False):
+            messages.warning(request, f"O e-mail inserido já existe no sistema")
+            return HttpResponseRedirect(self.request.path_info)
+
+
+        matricula = profile_form['matricula'].value()
+        check_instance_matricula = EstudanteProfile.objects.filter(matricula=matricula, estudante=estudanteprofile_id).exists()
+        check_matricula = EstudanteProfile.objects.filter(matricula=matricula).exists()
+
+        if(check_matricula == True and check_instance_matricula == False):
+            messages.warning(request, f"O número de matrícula inserido já existe no sistema")
+            return HttpResponseRedirect(self.request.path_info)
+
 
         if(disciplina_form['disciplina'].value() != []):
             # Check form validation
@@ -440,6 +460,20 @@ class EstudanteCreateView(PermissionRequiredMixin, LoginRequiredMixin, CreateVie
         user_form = UserForm(request.POST, prefix='UF')
         profile_form = EstudanteProfileForm(request.POST, prefix='PF')
         disciplina_form = EstudanteDisciplinaForm(request.POST, prefix='DF')
+
+        email = user_form['email'].value()
+        check_email = User.objects.filter(email=email).exists()
+
+        if(check_email == True):
+            messages.warning(request, f"O e-mail inserido já existe no sistema")
+            return HttpResponseRedirect(self.request.path_info)
+
+        matricula = profile_form['matricula'].value()
+        check_matricula = EstudanteProfile.objects.filter(matricula=matricula).exists()
+
+        if(check_matricula == True):
+            messages.warning(request, f"O número de matrícula inserido já existe no sistema")
+            return HttpResponseRedirect(self.request.path_info)
 
         if(disciplina_form['disciplina'].value() != []):
             # Check form validation
@@ -621,6 +655,14 @@ class ProfessorUpdateView(PermissionRequiredMixin, LoginRequiredMixin, UpdateVie
         user_form = UserForm(request.POST, instance=user, prefix='UF')
         curso_form = ProfessorCursoForm(request.POST, prefix='CF')
 
+        email = user_form['email'].value()
+        check_instance_email = User.objects.filter(email=email, id=user_id).exists()
+        check_email = User.objects.filter(email=email).exists()
+
+        if(check_email == True and check_instance_email == False):
+            messages.warning(request, f"O e-mail inserido já existe no sistema")
+            return HttpResponseRedirect(self.request.path_info)
+
         if(curso_form['curso'].value() != []):
             print("batata")
             # Check form validation
@@ -664,6 +706,14 @@ class ProfessorCreateView(PermissionRequiredMixin, LoginRequiredMixin, CreateVie
 
         user_form = UserForm(request.POST, prefix='UF')
         curso_form = ProfessorCursoForm(request.POST, prefix='CF')
+
+        email = user_form['email'].value()
+        check_email = User.objects.filter(email=email).exists()
+
+        if(check_email == True):
+            messages.warning(request, f"O e-mail inserido já existe no sistema")
+            return HttpResponseRedirect(self.request.path_info)
+
 
         if(curso_form['curso'].value() != []):
             # Check form validation
@@ -802,6 +852,13 @@ class CoordenadorCreateView(PermissionRequiredMixin, LoginRequiredMixin, CreateV
 
         user_form = UserForm(request.POST, prefix='UF')
 
+        email = user_form['email'].value()
+        check_email = User.objects.filter(email=email).exists()
+
+        if(check_email == True):
+            messages.warning(request, f"O e-mail inserido já existe no sistema")
+            return HttpResponseRedirect(self.request.path_info)
+
         # Check form validation
         if user_form.is_valid():
             user = user_form.save(commit=False)
@@ -854,6 +911,14 @@ class CoordenadorUpdateView(PermissionRequiredMixin, LoginRequiredMixin, UpdateV
         coordenadorprofile = CoordenadorProfile.objects.get(id=coordenadorprofile_id)
 
         user_form = UserForm(request.POST, instance=user, prefix='UF')
+
+        email = user_form['email'].value()
+        check_instance_email = User.objects.filter(email=email, id=user_id).exists()
+        check_email = User.objects.filter(email=email).exists()
+
+        if(check_email == True and check_instance_email == False):
+            messages.warning(request, f"O e-mail inserido já existe no sistema")
+            return HttpResponseRedirect(self.request.path_info)
 
         # Check form validation
         if user_form.is_valid():
