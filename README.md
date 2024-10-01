@@ -20,7 +20,7 @@
 
 1. **Clone the repository:**
     ```bash
-   git clone https://github.com/your-username/studentwatch.git
+   git clone https://github.com/your-username/studentwatch.git](https://github.com/mattsimoessilva/StudentWatch.git
     ```
 2. **Install dependencies:**
 
