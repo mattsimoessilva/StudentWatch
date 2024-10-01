@@ -1,4 +1,3 @@
-```markdown
 # StudentWatch: A Student Attendance Tracking System
 
 **StudentWatch** is a web application designed to streamline student attendance management for educational institutions. Built with Python and Django, it offers an intuitive interface for easy tracking, reporting, and analysis of student attendance data.
